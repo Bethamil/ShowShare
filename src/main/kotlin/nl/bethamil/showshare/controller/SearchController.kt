@@ -13,11 +13,23 @@ import org.springframework.web.bind.annotation.PostMapping
 @Controller
 class SearchController {
 
-    @GetMapping("/search/{query}")
-    fun searchedShow(@PathVariable query : String, model : Model) : String {
-        val searchedShow = RestService(RestTemplateBuilder()).getShowByQuery(query)?.results
-        model.addAttribute("shows",searchedShow)
-        return "searchedShowPage"
+//    @GetMapping("/search/{query}")
+//    fun searchedShow(@PathVariable query : String, model : Model) : String {
+//        val searchedShow = RestService(RestTemplateBuilder()).getShowByQuery(query)?.results
+//        model.addAttribute("shows",searchedShow)
+//        return "searchedShowPage"
+//    }
+
+    @PostMapping("/search")
+    fun searchedShow(@ModelAttribute("query") query: String , model : Model) : String {
+        if (query.isNotEmpty()) {
+            val searchedShow = RestService(RestTemplateBuilder()).getShowByQuery(query)?.results
+            model.addAttribute("shows", searchedShow)
+            return "searchedShowPage"
+        }
+        return "redirect:/"
     }
+
+
 
 }

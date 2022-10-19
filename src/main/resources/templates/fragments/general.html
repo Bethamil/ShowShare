@@ -9,7 +9,7 @@
 </head>
 <body>
 <div th:fragment="navbar">
-    <nav class="navbar navbar-dark navbar-expand-lg " style="background-color: #222831">
+    <nav class="navbar navbar-dark navbar-expand-lg sticky-top" style="background-color: #222831">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">ShowShare</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -21,6 +21,9 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:href="@{/populair}">Most Populair</a>
                     </li>
                     <li class="nav-item" sec:authorize="isAnonymous()">
                         <a class="nav-link active" aria-current="page" th:href="@{/register}">Register</a>
@@ -41,8 +44,8 @@
                     </li>
 
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" id="search" placeholder="Search" aria-label="Search">
+                <form class="d-flex" th:action="@{/search}" role="search" th:object="${query}" method="post">
+                    <input  class="form-control me-2" id="search" name="query" placeholder="Search" aria-label="Search" required>
                     <button class="btn btn-outline-success" id="WFF" type="submit">Search</button>
                 </form>
             </div>
@@ -53,8 +56,8 @@
     <footer><p class="text-center text text-muted">Copyright Bethamil &copy;2022</p></footer>
 </div>
 <div th:fragment="bottomScripts">
-    <!--    <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>-->
-    <!--    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>-->
+<!--        <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>-->
+<!--        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>-->
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
             integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
@@ -62,13 +65,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"
             integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk"
             crossorigin="anonymous"></script>
-
-
-    <script>var button = document.getElementById("WFF");
-    button.onclick = function () {
-        var text = document.getElementById("search").value;
-        window.open("/search/" + text);
-    }</script>
 
 </div>
 </body>

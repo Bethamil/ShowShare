@@ -24,7 +24,7 @@ class ShowShareSecurityConfig(val showShareUserDetailService: ShowShareUserDetai
         httpSecurity.authorizeHttpRequests { authorize ->
             authorize
                 .antMatchers("/css/*", "/webjars/**", "/images/**", "/search/**").permitAll()
-                .antMatchers("/", "/populair/*", "/show/*", "/register/**").permitAll()
+                .antMatchers("/", "/populair/**", "/show/*", "/register/**").permitAll()
                 .anyRequest().authenticated()
         }.formLogin { form: FormLoginConfigurer<HttpSecurity> -> form.loginPage("/login").permitAll().and() }
             .logout { logout: LogoutConfigurer<HttpSecurity?> ->

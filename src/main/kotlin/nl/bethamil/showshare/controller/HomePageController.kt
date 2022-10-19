@@ -14,14 +14,14 @@ class HomePageController {
     protected fun showPopulairSeries(model: Model): String {
         val populairShows = RestService(RestTemplateBuilder()).getPopulairSeries(1)?.results
         model.addAttribute("shows", populairShows)
-        return "homePage"
+        return "mostPopulair"
     }
 
     @GetMapping("/populair/{pageNumber}")
     protected fun showPopulairSeries(@PathVariable pageNumber: Int, model: Model): String {
         val populairShows = RestService(RestTemplateBuilder()).getPopulairSeries(pageNumber)?.results
         model.addAttribute("shows", populairShows)
-        return "homePage"
+        return "mostPopulair"
     }
 
     @GetMapping("/show/{showId}")
