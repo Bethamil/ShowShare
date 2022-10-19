@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org">
+<head th:replace="fragments/general :: baseHeader(~{:: title})">
+    <title>Login</title>
+</head>
+<body>
+<div th:replace="fragments/general :: navbar"></div>
+<div class="container" sec:authorize="isAnonymous()">
+    <h1>Please Log In</h1>
+    <div th:if="${param.error}">
+        Invalid username and password.
+    </div>
+    <div th:if="${param.logout}">
+        You have been logged out.
+    </div>
+    <form th:action="@{/login}" method="post">
+        <div>
+            <input type="text" name="username" placeholder="Username"/>
+        </div>
+        <div>
+            <input type="password" name="password" placeholder="Password"/>
+        </div>
+        <input class="btn btn-light" type="submit" value="Log in"/>
+    </form>
+
+    <div class="container" sec:authorize="isAuthenticated()">
+        <H1>You are already logged in</H1>
+    </div>
+
+
+    <div th:replace="fragments/general :: footer"></div>
+    <div th:replace="fragments/general :: bottomScripts"></div>
+</div>
+</body>
+</html>

@@ -10,13 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable
 
 @Controller
 class HomePageController {
-
-
-
     @GetMapping("/", "/populair")
     protected fun showPopulairSeries(model: Model): String {
         val populairShows = RestService(RestTemplateBuilder()).getPopulairSeries(1)?.results
-        println(populairShows)
         model.addAttribute("shows", populairShows)
         return "homePage"
     }

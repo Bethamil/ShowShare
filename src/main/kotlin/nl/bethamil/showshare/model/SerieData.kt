@@ -8,7 +8,7 @@ data class Show(
     val id: Int,
     val first_air_date: String = "",
     val last_air_date: String = "",
-    val backdrop_path: String,
+    val backdrop_path: String?,
     val name: String,
     val original_name: String,
     val overview: String,

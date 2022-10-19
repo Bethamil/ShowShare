@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/general :: baseHeader(~{:: title})">
+  <title>Register</title>
+</head>
+<body>
+<div th:replace="fragments/general :: navbar"></div>
+
+<div class="container justify-content-center">
+  <form th:action="@{/register/new}" method="post" th:object="${newUser}">
+    <input type="text" th:field="*{username}" required placeholder="Username"/>
+    <input type="password" th:field="*{password}" required placeholder="Password">
+    <input class=" btn btn-light" type="submit" value="Save new user">
+  </form>
+
+</div>
+<div th:replace="fragments/general :: footer"></div>
+<div th:replace="fragments/general :: bottomScripts"></div>
+</body>
+</html>
