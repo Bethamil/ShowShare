@@ -23,7 +23,7 @@ class ShowShareSecurityConfig(val showShareUserDetailService: ShowShareUserDetai
     fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain? {
         httpSecurity.authorizeHttpRequests { authorize ->
             authorize
-                .antMatchers("/css/*", "/webjars/**", "/images/**").permitAll()
+                .antMatchers("/css/*", "/webjars/**", "/images/**", "/search/**").permitAll()
                 .antMatchers("/", "/populair/*", "/show/*", "/register/**").permitAll()
                 .anyRequest().authenticated()
         }.formLogin { form: FormLoginConfigurer<HttpSecurity> -> form.loginPage("/login").permitAll().and() }

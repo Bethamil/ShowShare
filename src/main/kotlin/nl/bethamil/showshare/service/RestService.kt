@@ -35,4 +35,10 @@ class RestService(restTemplateBuilder: RestTemplateBuilder) {
             "https://api.themoviedb.org/3/tv/{showId}?api_key={apiKey}&language=en-US"
         return restTemplate.getForObject(url, Show::class.java, showId ,Secrets.movieDBKey)
     }
+
+    fun getShowByQuery(showTitle : String) : SerieData? {
+        val url =
+            "https://api.themoviedb.org/3/search/tv?api_key={apiKey}&query={showTitle}"
+        return restTemplate.getForObject(url, SerieData::class.java ,Secrets.movieDBKey, showTitle)
+    }
 }
