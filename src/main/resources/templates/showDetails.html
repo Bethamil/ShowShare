@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org">
 <head th:replace="fragments/general :: baseHeader(~{:: title})">
     <title th:text="${show.getName()}"></title>
 </head>
@@ -8,12 +8,13 @@
 <div class="container">
 
     <div class="card bg-dark">
-        <img th:src="@{${'https://image.tmdb.org/t/p/original' + show.getBackdrop_path()}}" class="card-img-top" alt="...">
+        <img th:src="@{${'https://image.tmdb.org/t/p/original' + show.getBackdrop_path()}}" class="card-img-top"
+             alt="...">
         <div class="card-body">
             <div class="row row-cols-2">
                 <div class="">
                     <img class="" th:src="@{${'https://image.tmdb.org/t/p/w185' + show.getPoster_path()}}"
-                          alt="Card image cap">
+                         alt="Card image cap">
                 </div>
                 <div class="">
                     <h1 class="card-title" th:text="${show.getName()}">Card title</h1>
@@ -21,14 +22,26 @@
                     <p class="card-text" th:text="'&#11088; ' + ${show.getVote_average()}"></p>
                     <p class="card-text" th:text="${show.getOverview()}"></p>
                 </div>
-            </div>
 
+                <div th:object="${saveShowId}" th:switch="${notAdded}" sec:authorize="isAuthenticated()">
+
+                    <form th:action="@{/show/add}" method="post">
+                        <br>
+                        <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
+                        <input th:case="true" class=" btn btn-light" type="submit" value="Add to Collection">
+                    </form>
+                    <form th:action="@{/show/delete}" method="post">
+                        <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
+                        <input th:case="*" class=" btn btn-light" type="submit" value="Delete from Collection">
+                    </form>
+                </div>
+            </div>
 
         </div>
     </div>
-
-
 </div>
+
+
 <div th:replace="fragments/general :: footer"></div>
 <div th:replace="fragments/general :: bottomScripts"></div>
 </body>

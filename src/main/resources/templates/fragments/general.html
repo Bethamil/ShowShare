@@ -31,6 +31,9 @@
                     <li class="nav-item" sec:authorize="isAnonymous()">
                         <a class="nav-link active" aria-current="page" th:href="@{/login}">Login</a>
                     </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link active" aria-current="page" th:href="@{/myCollection}">My Collection</a>
+                    </li>
 
 
                     <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
@@ -44,8 +47,8 @@
                     </li>
 
                 </ul>
-                <form class="d-flex" th:action="@{/search}" role="search" th:object="${query}" method="post">
-                    <input  class="form-control me-2" id="search" name="query" placeholder="Search" aria-label="Search" required>
+                <form class="d-flex" th:action="@{/search}" role="search" th:object="${query}" method="get">
+                    <input  class="form-control me-2" id="search" name="query" placeholder="Search by title" aria-label="Search" required>
                     <button class="btn btn-outline-success" id="WFF" type="submit">Search</button>
                 </form>
             </div>

@@ -3,7 +3,6 @@ package nl.bethamil.showshare.controller
 import nl.bethamil.showshare.model.ShowShareUser
 import nl.bethamil.showshare.repository.ShowShareUserRepo
 import org.hibernate.bytecode.BytecodeLogging.LOGGER
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -36,10 +35,6 @@ class UserController(val passwordEncoder: PasswordEncoder, val showShareUserRepo
         result: BindingResult,
         request: HttpServletRequest
     ): String {
-        println(showShareUser)
-        println("itWorked")
-        println(result)
-
         if (!result.hasErrors()) {
             val newUser = ShowShareUser(
                 username = showShareUser.username,
@@ -59,5 +54,4 @@ class UserController(val passwordEncoder: PasswordEncoder, val showShareUserRepo
             LOGGER.error("Error while login ", e)
         }
     }
-
 }
