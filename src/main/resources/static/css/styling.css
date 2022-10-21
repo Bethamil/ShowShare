@@ -31,7 +31,7 @@ body {
 .flip-card-text {
     display: -webkit-box;
     overflow: hidden;
-    -webkit-line-clamp: 12;
+    -webkit-line-clamp: 9;
     -webkit-box-orient: vertical;
 }
 
