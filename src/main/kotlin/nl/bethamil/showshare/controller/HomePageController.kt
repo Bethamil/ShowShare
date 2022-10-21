@@ -10,19 +10,21 @@ import org.springframework.web.bind.annotation.PathVariable
 
 @Controller
 class HomePageController {
-    @GetMapping("/", "/populair")
-    protected fun showPopulairSeries(model: Model): String {
-        val populairShows = RestService(RestTemplateBuilder()).getPopulairSeries(1)?.results
-        model.addAttribute("shows", populairShows)
-        return "mostPopulair"
+
+    @GetMapping("/")
+    protected fun showPopulairSeries() : String{
+     return "redirect:/allShows/popular/1"
     }
 
-    @GetMapping("/populair/{pageNumber}")
-    protected fun showPopulairSeries(@PathVariable pageNumber: Int, model: Model): String {
-        val populairShows = RestService(RestTemplateBuilder()).getPopulairSeries(pageNumber)?.results
-        model.addAttribute("shows", populairShows)
-        return "mostPopulair"
+    @GetMapping("/allShows/{category}/{pageNumber}")
+    protected fun showShows(
+        @PathVariable pageNumber: Int,
+        @PathVariable category: String,
+        model: Model
+    ): String {
+        val allShows = RestService(RestTemplateBuilder()).getShows(category, pageNumber)?.results
+        model.addAttribute("shows", allShows)
+        model.addAttribute("category", category)
+        return "topShowsPage"
     }
-
-
 }

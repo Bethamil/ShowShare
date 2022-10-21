@@ -5,31 +5,43 @@
 </head>
 <body>
 <div th:replace="fragments/general :: navbar"></div>
-<div class="container text-center" sec:authorize="isAnonymous()">
-    <h1>Please Log In</h1>
-    <div th:if="${param.error}">
-        Invalid username and password.
-    </div>
-    <div th:if="${param.logout}">
-        You have been logged out.
-    </div>
-    <form th:action="@{/login}" method="post">
-        <div>
-            <input type="text" name="username" placeholder="Username"/>
+
+<div class="container  " sec:authorize="isAnonymous()">
+
+    <div class="card bg-dark mx-auto" style="margin-top: 100px; margin-bottom: 10px">
+        <div class="card-header">
+            <h1>Please Log In</h1>
         </div>
-        <div>
-            <input type="password" name="password" placeholder="Password"/>
+        <div class="card-body">
+            <div th:if="${param.error}" style="color: red">
+                Invalid username and password.
+            </div>
+            <div th:if="${param.logout}">
+                You have been logged out.
+            </div>
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label for="usernameInput" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="usernameInput" name="username" placeholder="Enter username"/>
+                </div>
+                <div class="mb-3">
+                    <label for="inputPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="inputPassword" name="password"
+                           placeholder="Enter password"/>
+                </div>
+                <input class="btn btn-light" type="submit" value="Log in"/>
+            </form>
+
+            <div class="container" sec:authorize="isAuthenticated()">
+                <H1>You are already logged in</H1>
+            </div>
         </div>
-        <input class="btn btn-light" type="submit" value="Log in"/>
-    </form>
 
-    <div class="container" sec:authorize="isAuthenticated()">
-        <H1>You are already logged in</H1>
     </div>
-
-
-    <div th:replace="fragments/general :: footer"></div>
-    <div th:replace="fragments/general :: bottomScripts"></div>
 </div>
+
+
+<div th:replace="fragments/general :: footer"></div>
+<div th:replace="fragments/general :: bottomScripts"></div>
 </body>
 </html>

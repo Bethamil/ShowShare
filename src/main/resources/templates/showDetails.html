@@ -42,14 +42,17 @@
     </div>
     <br>
 
+    <h1 style="text-align: center">All Seasons</h1>
+    <br>
+
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
         <div th:each="season : ${show.getSeasons()}">
             <div class="col flip-card">
                 <div class="card text-bg-dark  flip-card-inner">
-                    <img th:src="@{${'https://image.tmdb.org/t/p/w500' + season.getPoster_path}}" class="card-img flip-card-front"
+                    <img th:src="@{${'https://image.tmdb.org/t/p/w500' + season.getPoster_path}} "  class="card-img flip-card-front"
                           th:alt="${season.getName()}">
                     <div class="card-img-overlay flip-card-back">
-                        <h5 class="card-title" th:text="${season.getName()}">Card title</h5>
+                        <h5 class="card-title" th:text="${season.getSeason_number()} + '. ' + ${season.getName()}">Card title</h5>
                         <p class="card-text"><small th:text="'Episode count: ' + ${season.getEpisode_count()}">Last updated 3 mins
                             ago</small></p>
                         <p class="card-text flip-card-text" th:text="${season.getOverview()}"></p>

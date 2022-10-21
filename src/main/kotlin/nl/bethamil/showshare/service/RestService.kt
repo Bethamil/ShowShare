@@ -25,10 +25,18 @@ class RestService(restTemplateBuilder: RestTemplateBuilder) {
     }
 
 
-    fun getPopulairSeries(pageNumber : Int): SerieData? {
+    fun getShows(category : String, pageNumber :  Int = -1): SerieData? {
+        if (pageNumber == -1) {
+            val url =
+                "https://api.themoviedb.org/3/tv/{category}?api_key={apiKey}&language=en-US"
+            return restTemplate.getForObject(url, SerieData::class.java, category, Secrets.movieDBKey)
+
+
+        }
+
         val url =
-            "https://api.themoviedb.org/3/tv/popular?api_key={apiKey}&language=en-US&page={pageNumber}"
-        return restTemplate.getForObject(url, SerieData::class.java, Secrets.movieDBKey, pageNumber)
+            "https://api.themoviedb.org/3/tv/{category}?api_key={apiKey}&language=en-US&page={pageNumber}"
+        return restTemplate.getForObject(url, SerieData::class.java, category, Secrets.movieDBKey, pageNumber)
     }
 
     fun getSingleShow(showId : Int) : Show? {
