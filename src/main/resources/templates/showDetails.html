@@ -29,11 +29,11 @@
                     <form th:action="@{/show/add}" method="post">
                         <br>
                         <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
-                        <input th:case="true" class=" btn btn-light" type="submit" value="Add to Collection">
+                        <input th:case="true" class=" btn btn-outline-danger" type="submit" value="Add to Favorites &#9825;">
                     </form>
                     <form th:action="@{/show/delete}" method="post">
                         <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
-                        <input th:case="*" class=" btn btn-light" type="submit" value="Delete from Collection">
+                        <input th:case="*" class=" btn btn-outline-danger" type="submit" value="Delete from Favorites &#9825;">
                     </form>
                 </div>
             </div>

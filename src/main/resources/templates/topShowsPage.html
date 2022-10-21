@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org">
 <head th:replace="fragments/general :: baseHeader(~{:: title})">
-    <title>ShowShare Home</title>
-
+        <title th:if="${category} == 'favorites'">ShowShare|Favorites</title>
+        <title th:if="${category} == 'popular'">ShowShare|Popular</title>
+        <title th:if="${category} == 'on_the_air'">ShowShare|On the Air</title>
+        <title th:if="${category} == 'top_rated'">ShowShare|Top Rated</title>
 </head>
 <body>
 <div th:replace="fragments/general :: navbar"></div>
 <div class="container">
     <div th:switch="${category}">
-    <h1 th:case="popular" >Most Popular</h1>
-    <h1 th:case="top_rated" >Top Rated</h1>
-    <h1 th:case="on_the_air" >On the Air</h1>
-</div>
-
+        <h1 th:case="popular">Most Popular</h1>
+        <h1 th:case="top_rated">Top Rated</h1>
+        <h1 th:case="on_the_air">On the Air</h1>
+        <h1 th:case="favorites">My Favorites</h1>
+    </div>
 
 
     <div class="row row-cols-1 row-cols-xl-6 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 g-4 ">
@@ -29,14 +31,16 @@
             </div>
         </div>
     </div>
-    <div>
+    <div th:if="${category != 'favorites'}">
         <nav aria-label="...">
             <ul class="pagination pagination-sm justify-content-center">
                 <li class="page-item ">
                     <a class="page-link" th:href="@{/allShows/{category}/1(category=${category})}" tabindex="-1">1</a>
                 </li>
-                <li class="page-item"><a class="page-link" th:href="@{/allShows/{category}/2(category=${category})}">2</a></li>
-                <li class="page-item"><a class="page-link" th:href="@{/allShows/{category}/3(category=${category})}">3</a></li>
+                <li class="page-item"><a class="page-link"
+                                         th:href="@{/allShows/{category}/2(category=${category})}">2</a></li>
+                <li class="page-item"><a class="page-link"
+                                         th:href="@{/allShows/{category}/3(category=${category})}">3</a></li>
             </ul>
         </nav>
     </div>

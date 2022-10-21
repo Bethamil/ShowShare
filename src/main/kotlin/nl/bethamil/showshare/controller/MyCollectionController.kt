@@ -12,7 +12,7 @@ import java.security.Principal
 import javax.servlet.http.HttpServletRequest
 
 @Controller
-class MyCollection(val showCollectionRepo: ShowCollectionRepo, val showShareUserRepo: ShowShareUserRepo) {
+class MyCollectionController(val showCollectionRepo: ShowCollectionRepo, val showShareUserRepo: ShowShareUserRepo) {
 
     @GetMapping("/myCollection")
     protected fun myCollection(model: Model, request : HttpServletRequest) : String {
@@ -25,9 +25,11 @@ class MyCollection(val showCollectionRepo: ShowCollectionRepo, val showShareUser
                 ?.let { listOfUserShows.add(it) }
         }
 
-        println(listOfUserShows)
+        val favorite = "favorites"
+
+        model.addAttribute("category", favorite)
         model.addAttribute("shows", listOfUserShows)
-        return "myCollection"
+        return "topShowsPage"
 
     }
 }
