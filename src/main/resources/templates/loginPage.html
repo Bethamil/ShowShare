@@ -5,7 +5,7 @@
 </head>
 <body>
 <div th:replace="fragments/general :: navbar"></div>
-<div class="container" sec:authorize="isAnonymous()">
+<div class="container text-center" sec:authorize="isAnonymous()">
     <h1>Please Log In</h1>
     <div th:if="${param.error}">
         Invalid username and password.

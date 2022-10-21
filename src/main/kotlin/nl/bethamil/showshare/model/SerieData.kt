@@ -15,5 +15,15 @@ data class Show(
     val popularity: Double?,
     val poster_path: String?,
     val vote_average: Double?,
-    val vote_count: Int?
+    val vote_count: Int?,
+    val seasons : List<Season>?,
 )
+
+data class Season(
+    val air_date : String?,
+    val episode_count : Int,
+    val name : String?,
+    val overview : String?,
+    val season_number : Int?,
+    val poster_path: String?,
+    )
