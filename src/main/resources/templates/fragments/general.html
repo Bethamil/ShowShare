@@ -2,25 +2,24 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org">
 <head th:fragment="baseHeader(title)">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1 minimum-scale=1, user-scalable=no">
     <title th:replace="${title}">General title</title>
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
     <link rel="stylesheet" type="text/css" href="/css/styling.css">
 </head>
 <body>
-<div th:fragment="navbar">
-    <nav class="navbar navbar-dark navbar-expand-lg sticky-top" style="background-color: #222831">
+<div th:fragment="navbar" style="margin-bottom: 95px">
+    <nav class="navbar navbar-dark navbar-expand-lg fixed-top" style="background-color: #222831;">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">
-                <img src="/images/ShowShare.png" width="70" height="70" style="margin-left: 25px" alt="logo"></a>
-            </a>
+                <img src="/images/ShowShare.png" style=" width: 30vh" alt="logo"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="font-size: 20px">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
@@ -43,7 +42,6 @@
                         <a class="nav-link active" aria-current="page" th:href="@{/myCollection}">My Favorites &#9825;</a>
                     </li>
 
-
                     <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
@@ -55,6 +53,7 @@
                     </li>
 
                 </ul>
+
                 <form class="d-flex" th:action="@{/search}" role="search" th:object="${query}" method="get">
                     <input class="form-control me-2" id="search" name="query" placeholder="Search by title"
                            aria-label="Search" required>
@@ -63,6 +62,7 @@
             </div>
         </div>
     </nav>
+
 </div>
 <div th:fragment="footer">
     <footer><p class="text-center text text-muted">Copyright Bethamil &copy;2022</p></footer>
