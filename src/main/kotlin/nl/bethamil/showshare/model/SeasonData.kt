@@ -3,7 +3,7 @@ package nl.bethamil.showshare.model
 data class SeasonData(
     val _id : String?,
     val air_date : String?,
-    val episodes : List<Episode>?,
+    val episodes : List<Episode>? = emptyList(),
     val name : String?,
     val overview: String?,
     val id : Int?,

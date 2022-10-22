@@ -1,8 +1,11 @@
 package nl.bethamil.showshare.controller
 
+import nl.bethamil.showshare.model.RatingShow
+import nl.bethamil.showshare.model.Show
 import nl.bethamil.showshare.model.ShowCollection
 import nl.bethamil.showshare.model.ShowShareUser
 import nl.bethamil.showshare.repository.ShowCollectionRepo
+import nl.bethamil.showshare.repository.ShowRatingRepo
 import nl.bethamil.showshare.repository.ShowShareUserRepo
 import nl.bethamil.showshare.service.RestService
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -22,7 +25,8 @@ import javax.servlet.http.HttpServletRequest
 class ShowDetailController(
     val showCollectionRepo: ShowCollectionRepo,
     val showUserRepo: ShowShareUserRepo,
-    val showShareUserRepo: ShowShareUserRepo
+    val showShareUserRepo: ShowShareUserRepo,
+    val showRatingRepo: ShowRatingRepo
 ) {
 
     @GetMapping("/show")
@@ -33,19 +37,38 @@ class ShowDetailController(
     }
 
     @GetMapping("/show/{showId}")
-    protected fun clickShow(@PathVariable showId: Int, model: Model, request : HttpServletRequest): String {
+    protected fun clickShow(@PathVariable showId: Int, model: Model, request: HttpServletRequest): String {
         val selectedShow = RestService(RestTemplateBuilder()).getSingleShow(showId)
         model.addAttribute("show", selectedShow)
         val principal: Principal? = request.userPrincipal
 
+        addModelAttributes(principal, selectedShow, model)
+
+        return "showDetails"
+    }
+
+    private fun addModelAttributes(
+        principal: Principal?,
+        selectedShow: Show?,
+        model: Model
+    ) {
         if (principal != null) {
             val userId: Long? = showShareUserRepo.findByUsername(principal.name)?.get()?.id
             if (selectedShow?.id?.let { showCollectionRepo.findByUserIdAndShowId(it.toLong(), userId!!).isEmpty }
                 == true) {
                 model.addAttribute("notAdded", true)
             }
+            if (selectedShow?.id?.toLong()?.let { showRatingRepo.findByUserIdAndShowId(it, userId!!).isPresent }
+                == true) {
+                val selectedRating: RatingShow =
+                    showRatingRepo.findByUserIdAndShowId(selectedShow.id.toLong(), userId!!).get()
+                model.addAttribute("ratingFromDB", selectedRating)
+            } else {
+                val ratingShow = RatingShow(ratingId = -1)
+                println(ratingShow.ratingId)
+                model.addAttribute("ratingFromDB", ratingShow)
+            }
         }
-        return "showDetails"
     }
 
     @PostMapping("/show/add")
@@ -73,8 +96,10 @@ class ShowDetailController(
 
         val principal: Principal = request.userPrincipal
         val currentUser: ShowShareUser? = showUserRepo.findByUsername(principal.name)!!.orElse(ShowShareUser())
-        val showCollection = showCollectionRepo.findByUserIdAndShowId(show_id = showId,
-            user_id = currentUser!!.id!!.toLong())
+        val showCollection = showCollectionRepo.findByUserIdAndShowId(
+            show_id = showId,
+            user_id = currentUser!!.id!!.toLong()
+        )
 
         if (!result.hasErrors()) {
             println(showCollection.toString() + "DELETED")
@@ -83,12 +108,33 @@ class ShowDetailController(
         return "redirect:/show/$showId"
     }
 
+    @PostMapping("/show/addRating")
+    protected fun addRating(
+        @ModelAttribute("saveShowId") showId: Long,
+        @ModelAttribute("yourRating") rating: Double,
+        @ModelAttribute("ratingDB") ratingId: Long,
+        result: BindingResult,
+        request: HttpServletRequest
+    ): String {
+
+        val principal: Principal = request.userPrincipal
+        val currentUser: ShowShareUser? = showUserRepo.findByUsername(principal.name)!!.orElse(ShowShareUser())
+        val ratingShow = if (ratingId != -1L) {
+            RatingShow(ratingId = ratingId, user = currentUser!!, rating = rating, showId = showId)
+        } else {
+            RatingShow(user=currentUser!!, rating = rating, showId = showId)
+        }
+        showRatingRepo.save(ratingShow)
+        return "redirect:/show/$showId"
+    }
+
     @GetMapping("/show/{showId}/{seasonNumber}")
     protected fun seasonDetails(
         @PathVariable showId: Int,
         @PathVariable seasonNumber: Int,
         model: Model,
-        request : HttpServletRequest) : String{
+        request: HttpServletRequest
+    ): String {
 
         val seasonData = RestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)
         val selectedShow = RestService(RestTemplateBuilder()).getSingleShow(showId)
@@ -96,4 +142,6 @@ class ShowDetailController(
         model.addAttribute("season", seasonData)
         return "seasonDetails"
     }
+
+
 }

@@ -16,7 +16,7 @@ data class Show(
     val poster_path: String?,
     val vote_average: Double?,
     val vote_count: Int?,
-    val seasons : List<Season>?,
+    val seasons : List<Season>? = emptyList(),
 )
 
 data class Season(

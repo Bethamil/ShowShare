@@ -13,6 +13,6 @@ interface ShowCollectionRepo : JpaRepository<ShowCollection, Long> {
     fun findByUserIdAndShowId(show_id : Long, user_id : Long) : Optional<ShowCollection>
 
     @Query(
-        "SELECT u FROM ShowCollection u WHERE u.user.id=?1")
+        "SELECT u FROM ShowCollection u WHERE u.user.id=?1 ORDER BY u.id desc ")
     fun findByUserId(user_id : Long) : List<ShowCollection>
 }

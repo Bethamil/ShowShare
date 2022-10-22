@@ -7,39 +7,94 @@
 <div th:replace="fragments/general :: navbar"></div>
 <div class="container">
 
-    <div class="card mb-3 bg-dark" >
+    <div class="card mb-3 bg-dark">
         <img th:src="@{${'https://image.tmdb.org/t/p/original' + show.getBackdrop_path()}}"
              class="card-img-top img-detail-top"
              alt="...">
         <div class="card-body">
-            <div class="row row-cols-sm-2 row-cols-1">
-                <div class="row-cols-md-auto">
+            <div class="row g-4">
+                <div class="col col-md-auto">
                     <img class="" th:src="@{${'https://image.tmdb.org/t/p/w185' + show.getPoster_path()}}"
                          alt="Card image cap">
                 </div>
-                <div class="">
+                <div class="col ">
                     <h1 class="card-title" th:text="${show.getName()}">Card title</h1>
+
+
+                    <div class="row  row-cols-auto g-2" style="margin-bottom: 2vh; margin-top: 2vh"
+                         sec:authorize="isAuthenticated()">
+                        <!--                    Add Rating -->
+                        <div class="">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal"
+                                    th:text="${ratingFromDB.getRating()} != null ?'Your Rating: '  + ${ratingFromDB.getRating()} : 'Give Rating'">
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade modal-sm" id="exampleModal" tabindex="-1"
+                                 aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content bg-dark">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel"
+                                                th:text="'Rating for: ' + ${show.getName()}">Modal title</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+
+                                        <form th:action="@{/show/addRating}" method="post" class="form">
+                                            <div class="modal-body">
+                                                <input hidden type="number" name="ratingDB"
+                                                       th:value="${ratingFromDB.getRatingId()}">
+                                                <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
+                                                <label for="ratingInput" class="form-label">Your rating</label>
+                                                <input class="form-control form-control-lg" id="ratingInput"
+                                                       name="yourRating" th:value="${ratingFromDB.getRating()}"
+                                                       type="number" min="1"
+                                                       max="10" step="0.1" style="" required>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" name="rating"
+                                                        data-bs-dismiss="modal">Close
+                                                </button>
+                                                <input type="submit" class="btn btn-success" value="Save Rating">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!--                    Save to Favorites-->
+                        <div class="col" th:object="${saveShowId}" th:switch="${notAdded}">
+
+                            <form th:action="@{/show/add}" method="post">
+                                <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
+                                <input th:case="true" class="btn btn-danger" type="submit"
+                                       value="Add to Favorites &#9825;">
+                            </form>
+                            <form th:action="@{/show/delete}" method="post">
+                                <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
+                                <input th:case="*" class=" btn btn-danger" type="submit"
+                                       value="Delete from Favorites &#9825;">
+                            </form>
+                        </div>
+
+
+                    </div>
                     <p class="card-text" th:text="'First air date: ' + ${show.getFirst_air_date()}"></p>
                     <p class="card-text" th:text="'&#11088; ' + ${show.getVote_average()}"></p>
                     <p class="card-text" th:text="${show.getOverview()}"></p>
                 </div>
 
-                <div th:object="${saveShowId}" th:switch="${notAdded}" sec:authorize="isAuthenticated()">
-
-                    <form th:action="@{/show/add}" method="post">
-                        <br>
-                        <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
-                        <input th:case="true" class=" btn btn-outline-danger" type="submit" value="Add to Favorites &#9825;">
-                    </form>
-                    <form th:action="@{/show/delete}" method="post">
-                        <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
-                        <input th:case="*" class=" btn btn-outline-danger" type="submit" value="Delete from Favorites &#9825;">
-                    </form>
-                </div>
             </div>
-
         </div>
+
     </div>
+
     <br>
 
     <h1 style="text-align: center">All Seasons</h1>
@@ -49,16 +104,20 @@
         <div th:each="season : ${show.getSeasons()}">
             <div class="col flip-card">
                 <div class="card text-bg-dark  flip-card-inner">
-                    <img th:src="@{${'https://image.tmdb.org/t/p/w500' + season.getPoster_path}} "  class="card-img flip-card-front"
-                          th:alt="${season.getName()}">
+                    <img th:src="@{${'https://image.tmdb.org/t/p/w500' + season.getPoster_path}} "
+                         class="card-img flip-card-front"
+                         th:alt="${season.getName()}">
                     <div class="card-img-overlay flip-card-back">
-                        <h5 class="card-title" th:text="${season.getSeason_number()} + '. ' + ${season.getName()}">Card title</h5>
-                        <p class="card-text"><small th:text="'Episode count: ' + ${season.getEpisode_count()}">Last updated 3 mins
+                        <h5 class="card-title" th:text="${season.getSeason_number()} + '. ' + ${season.getName()}">Card
+                            title</h5>
+                        <p class="card-text"><small th:text="'Episode count: ' + ${season.getEpisode_count()}">Last
+                            updated 3 mins
                             ago</small></p>
                         <p class="card-text flip-card-text" th:text="${season.getOverview()}"></p>
                         <p class="card-text"><small th:text="'air date: ' + ${season.getAir_date()}">Last updated 3 mins
                             ago</small></p>
-                        <a th:href="@{/show/{showId}/{seasonNumber}(showId=${show.getId()}, seasonNumber=${season.getSeason_number})}" class="stretched-link btn btn-outline-success">More info</a>
+                        <a th:href="@{/show/{showId}/{seasonNumber}(showId=${show.getId()}, seasonNumber=${season.getSeason_number})}"
+                           class="stretched-link btn btn-outline-success">More info</a>
                     </div>
                 </div>
             </div>
