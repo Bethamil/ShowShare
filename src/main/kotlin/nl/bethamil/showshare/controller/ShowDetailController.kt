@@ -1,9 +1,6 @@
 package nl.bethamil.showshare.controller
 
-import nl.bethamil.showshare.model.RatingShow
-import nl.bethamil.showshare.model.Show
-import nl.bethamil.showshare.model.ShowCollection
-import nl.bethamil.showshare.model.ShowShareUser
+import nl.bethamil.showshare.model.*
 import nl.bethamil.showshare.repository.ShowCollectionRepo
 import nl.bethamil.showshare.repository.ShowRatingRepo
 import nl.bethamil.showshare.repository.ShowShareUserRepo
@@ -39,7 +36,11 @@ class ShowDetailController(
     @GetMapping("/show/{showId}")
     protected fun clickShow(@PathVariable showId: Int, model: Model, request: HttpServletRequest): String {
         val selectedShow = RestService(RestTemplateBuilder()).getSingleShow(showId)
-        model.addAttribute("show", selectedShow)
+        if (selectedShow != null) {
+            model.addAttribute("show", selectedShow)
+        } else{
+            model.addAttribute("show", Show())
+        }
         val principal: Principal? = request.userPrincipal
 
         addModelAttributes(principal, selectedShow, model)
@@ -65,7 +66,6 @@ class ShowDetailController(
                 model.addAttribute("ratingFromDB", selectedRating)
             } else {
                 val ratingShow = RatingShow(ratingId = -1)
-                println(ratingShow.ratingId)
                 model.addAttribute("ratingFromDB", ratingShow)
             }
         }
@@ -96,11 +96,9 @@ class ShowDetailController(
 
         val principal: Principal = request.userPrincipal
         val currentUser: ShowShareUser? = showUserRepo.findByUsername(principal.name)!!.orElse(ShowShareUser())
-        val showCollection = showCollectionRepo.findByUserIdAndShowId(
-            show_id = showId,
+        val showCollection = showCollectionRepo.findByUserIdAndShowId(show_id = showId,
             user_id = currentUser!!.id!!.toLong()
         )
-
         if (!result.hasErrors()) {
             println(showCollection.toString() + "DELETED")
             showCollectionRepo.delete(showCollection.get())
@@ -138,8 +136,13 @@ class ShowDetailController(
 
         val seasonData = RestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)
         val selectedShow = RestService(RestTemplateBuilder()).getSingleShow(showId)
+
+        if (seasonData != null) {
+            model.addAttribute("season", seasonData)
+        } else {
+            model.addAttribute("season", SeasonData())
+        }
         model.addAttribute("show", selectedShow)
-        model.addAttribute("season", seasonData)
         return "seasonDetails"
     }
 

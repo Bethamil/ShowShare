@@ -26,9 +26,9 @@
                             TV-Shows
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/allShows/top_rated/1}">Top Rated 🔝</a></li>
                             <li><a class="dropdown-item" th:href="@{/allShows/popular/1}">Most Popular  &#128293; </a></li>
-                            <li><a class="dropdown-item" th:href="@{/allShows/top_rated/1}">Top Rated</a></li>
-                            <li><a class="dropdown-item" th:href="@{/allShows/on_the_air/1}">On the air</a></li>
+                            <li><a class="dropdown-item" th:href="@{/allShows/on_the_air/1}">On the air 📺</a></li>
                         </ul>
                     </li>
 
@@ -39,7 +39,7 @@
                         <a class="nav-link active" aria-current="page" th:href="@{/login}">Login</a>
                     </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link active" aria-current="page" th:href="@{/myCollection}">My Favorites &#9825;</a>
+                        <a class="nav-link active" aria-current="page" th:href="@{/myFavorites}">My Favorites &#9825;</a>
                     </li>
 
                     <li class="nav-item dropdown" sec:authorize="isAuthenticated()">

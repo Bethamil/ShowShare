@@ -4,7 +4,7 @@ body {
 }
 
 .img-detail-top {
-    height: 35vw;
+    height: 25vw;
     width: 100%;
     object-fit: cover;
 }
@@ -13,9 +13,10 @@ body {
 
 .flip-card {
     background-color: transparent;
-    width: 274px;
-    height: 420px;
+    width: 219px;
+    height: 336px;
     perspective: 1000px; /* Remove this if you don't want the 3D effect */
+
 }
 
 /* This container is needed to position the front and back side */
@@ -31,7 +32,14 @@ body {
 .flip-card-text {
     display: -webkit-box;
     overflow: hidden;
-    -webkit-line-clamp: 9;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+.flip-card-titel {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
 
@@ -51,7 +59,7 @@ body {
 
 /* Style the front side (fallback if image is missing) */
 .flip-card-front {
-    background-color: #bbb;
+    background-color: #198754;
     color: black;
 }
 
