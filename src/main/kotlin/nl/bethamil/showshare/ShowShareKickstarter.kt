@@ -10,13 +10,12 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class ShowShareKickstarter(
     val showShareUserRepo: ShowShareUserRepo,
     val passwordEncoder: PasswordEncoder,
-
     ) : CommandLineRunner {
 
 
     override fun run(vararg args: String?) {
-        if (showShareUserRepo.findByUsername("admin")?.isEmpty == true) {
-            var admin = ShowShareUser(username = "admin",
+        if (showShareUserRepo.findByUsername("admin").isEmpty) {
+            val admin = ShowShareUser(username = "admin",
                 password = passwordEncoder.encode("admin"))
             showShareUserRepo.save(admin)
         }

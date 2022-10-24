@@ -15,5 +15,4 @@ class RatingShow(
     val showId: Long? = null,
 ) {
 
-
 }

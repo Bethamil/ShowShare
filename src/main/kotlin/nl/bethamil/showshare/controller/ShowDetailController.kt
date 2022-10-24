@@ -1,10 +1,12 @@
 package nl.bethamil.showshare.controller
 
 import nl.bethamil.showshare.model.*
-import nl.bethamil.showshare.repository.ShowCollectionRepo
-import nl.bethamil.showshare.repository.ShowRatingRepo
-import nl.bethamil.showshare.repository.ShowShareUserRepo
-import nl.bethamil.showshare.service.RestService
+import nl.bethamil.showshare.service.MovieDbRestService
+import nl.bethamil.showshare.service.ShowCollectionService
+import nl.bethamil.showshare.service.ShowRatingService
+import nl.bethamil.showshare.service.ShowShareUserService
+import nl.bethamil.showshare.viewmodel.ModelViewMapper
+import nl.bethamil.showshare.viewmodel.ShowVM
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -20,26 +22,26 @@ import javax.servlet.http.HttpServletRequest
 
 @Controller
 class ShowDetailController(
-    val showCollectionRepo: ShowCollectionRepo,
-    val showUserRepo: ShowShareUserRepo,
-    val showShareUserRepo: ShowShareUserRepo,
-    val showRatingRepo: ShowRatingRepo
-) {
+    val showCollectionRepo: ShowCollectionService,
+    val showShareUserService: ShowShareUserService,
+    val showRatingService: ShowRatingService,
+) : ModelViewMapper {
 
     @GetMapping("/show")
     protected fun showPopulairSeries(model: Model): String {
-        val selectedShow = RestService(RestTemplateBuilder()).getSingleShow(113988)
+        val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(113988)
         model.addAttribute("show", selectedShow)
         return "showDetails"
     }
 
     @GetMapping("/show/{showId}")
     protected fun clickShow(@PathVariable showId: Int, model: Model, request: HttpServletRequest): String {
-        val selectedShow = RestService(RestTemplateBuilder()).getSingleShow(showId)
+        val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(showId)?.toShowVM()
+
         if (selectedShow != null) {
             model.addAttribute("show", selectedShow)
         } else{
-            model.addAttribute("show", Show())
+            model.addAttribute("show", Show().toShowVM())
         }
         val principal: Principal? = request.userPrincipal
 
@@ -50,23 +52,23 @@ class ShowDetailController(
 
     private fun addModelAttributes(
         principal: Principal?,
-        selectedShow: Show?,
+        selectedShow: ShowVM?,
         model: Model
     ) {
         if (principal != null) {
-            val userId: Long? = showShareUserRepo.findByUsername(principal.name)?.get()?.id
+            val userId: Long? = showShareUserService.findByUsername(principal.name).get().id
             if (selectedShow?.id?.let { showCollectionRepo.findByUserIdAndShowId(it.toLong(), userId!!).isEmpty }
                 == true) {
                 model.addAttribute("notAdded", true)
             }
-            if (selectedShow?.id?.toLong()?.let { showRatingRepo.findByUserIdAndShowId(it, userId!!).isPresent }
+            if (selectedShow?.id?.toLong()?.let { showRatingService.findByUserIdAndShowId(it, userId!!).isPresent }
                 == true) {
                 val selectedRating: RatingShow =
-                    showRatingRepo.findByUserIdAndShowId(selectedShow.id.toLong(), userId!!).get()
-                model.addAttribute("ratingFromDB", selectedRating)
+                    showRatingService.findByUserIdAndShowId(selectedShow.id!!.toLong(), userId!!).get()
+                model.addAttribute("ratingFromDB", selectedRating.toRatinVM())
             } else {
                 val ratingShow = RatingShow(ratingId = -1)
-                model.addAttribute("ratingFromDB", ratingShow)
+                model.addAttribute("ratingFromDB", ratingShow.toRatinVM())
             }
         }
     }
@@ -79,8 +81,8 @@ class ShowDetailController(
     ): String {
 
         val principal: Principal = request.userPrincipal
-        val currentUser: ShowShareUser? = showUserRepo.findByUsername(principal.name)!!.orElse(ShowShareUser())
-        val showCollection = ShowCollection(showId = showId, user = currentUser!!)
+        val currentUser: ShowShareUser = showShareUserService.findByUsername(principal.name).get()
+        val showCollection = ShowCollection(showId = showId, user = currentUser)
         if (!result.hasErrors()) {
             showCollectionRepo.save(showCollection)
         }
@@ -95,9 +97,9 @@ class ShowDetailController(
     ): String {
 
         val principal: Principal = request.userPrincipal
-        val currentUser: ShowShareUser? = showUserRepo.findByUsername(principal.name)!!.orElse(ShowShareUser())
+        val currentUser: ShowShareUser = showShareUserService.findByUsername(principal.name).get()
         val showCollection = showCollectionRepo.findByUserIdAndShowId(show_id = showId,
-            user_id = currentUser!!.id!!.toLong()
+            user_id = currentUser.id!!.toLong()
         )
         if (!result.hasErrors()) {
             println(showCollection.toString() + "DELETED")
@@ -116,13 +118,13 @@ class ShowDetailController(
     ): String {
 
         val principal: Principal = request.userPrincipal
-        val currentUser: ShowShareUser? = showUserRepo.findByUsername(principal.name)!!.orElse(ShowShareUser())
+        val currentUser: ShowShareUser = showShareUserService.findByUsername(principal.name).get()
         val ratingShow = if (ratingId != -1L) {
-            RatingShow(ratingId = ratingId, user = currentUser!!, rating = rating, showId = showId)
+            RatingShow(ratingId = ratingId, user = currentUser, rating = rating, showId = showId)
         } else {
-            RatingShow(user=currentUser!!, rating = rating, showId = showId)
+            RatingShow(user=currentUser, rating = rating, showId = showId)
         }
-        showRatingRepo.save(ratingShow)
+        showRatingService.save(ratingShow)
         return "redirect:/show/$showId"
     }
 
@@ -134,17 +136,15 @@ class ShowDetailController(
         request: HttpServletRequest
     ): String {
 
-        val seasonData = RestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)
-        val selectedShow = RestService(RestTemplateBuilder()).getSingleShow(showId)
+        val seasonData = MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)?.toSeasonDataVM()
+        val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(showId)?.toShowVM()
 
         if (seasonData != null) {
             model.addAttribute("season", seasonData)
         } else {
-            model.addAttribute("season", SeasonData())
+            model.addAttribute("season", SeasonData().toSeasonDataVM())
         }
         model.addAttribute("show", selectedShow)
         return "seasonDetails"
     }
-
-
 }

@@ -1,7 +1,7 @@
 package nl.bethamil.showshare.controller
 
-import nl.bethamil.showshare.service.RestService
-import org.springframework.boot.web.client.RestTemplateBuilder
+import nl.bethamil.showshare.service.MovieDbRestService
+import nl.bethamil.showshare.viewmodel.ModelViewMapper
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 
 
 @Controller
-class HomePageController {
+class HomePageController : ModelViewMapper {
 
     @GetMapping("/")
     protected fun showPopulairSeries() : String{
@@ -22,7 +22,7 @@ class HomePageController {
         @PathVariable category: String,
         model: Model
     ): String {
-        val allShows = RestService(RestTemplateBuilder()).getShows(category, pageNumber)?.results
+        val allShows = MovieDbRestService().getShows(category, pageNumber)?.toAllShowsListVM()!!.results
         model.addAttribute("shows", allShows)
         model.addAttribute("category", category)
         return "topShowsPage"

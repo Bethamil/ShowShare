@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate
 
 
 @Service
-class RestService(restTemplateBuilder: RestTemplateBuilder = RestTemplateBuilder()) {
+class MovieDbRestService(restTemplateBuilder: RestTemplateBuilder = RestTemplateBuilder()) {
     private val restTemplate: RestTemplate
 
     init {

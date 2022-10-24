@@ -29,19 +29,13 @@ data class Show(
         }
     }
 
-    fun getGenresAsString(): String {
-        var genreString = ""
-        if (genres!!.isNotEmpty()) {
-            genres?.forEach { g -> genreString += g.name + ", " }
-            genreString = genreString.removeRange(genreString.length - 2, genreString.length)
-        }
-        return genreString
-    }
+
 
     constructor() : this(
         null, null, null, null, null, null,
         null, null, null, null, null, null, emptyList(), emptyList()
     )
+
 
 }
 

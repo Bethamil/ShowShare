@@ -1,7 +1,7 @@
 package nl.bethamil.showshare.controller
 
 import nl.bethamil.showshare.model.ShowShareUser
-import nl.bethamil.showshare.repository.ShowShareUserRepo
+import nl.bethamil.showshare.service.ShowShareUserService
 import org.hibernate.bytecode.BytecodeLogging.LOGGER
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Controller
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest
 
 
 @Controller
-class UserController(val passwordEncoder: PasswordEncoder, val showShareUserRepo: ShowShareUserRepo) {
+class UserController(val passwordEncoder: PasswordEncoder, val showShareUserService: ShowShareUserService) {
 
     @GetMapping("/login")
     protected fun login(): String {
@@ -40,13 +40,13 @@ class UserController(val passwordEncoder: PasswordEncoder, val showShareUserRepo
                 username = showShareUser.username,
                 password = passwordEncoder.encode(showShareUser.password)
             )
-            showShareUserRepo.save(newUser)
+            showShareUserService.save(newUser)
             authWithHttpServletRequest(request = request, username = newUser.username, password = newUser.password)
         }
         return "redirect:/"
     }
 
-    fun authWithHttpServletRequest(request: HttpServletRequest, username: String?, password: String?) {
+    fun authWithHttpServletRequest(request: HttpServletRequest, username: String?, password: String?){
         try {
             request.session
             request.login(username, password)

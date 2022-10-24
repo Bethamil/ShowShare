@@ -14,11 +14,12 @@ class ShowShareUser(
     open var id: Long? = null,
 
     @Column(name= "username", unique = true )
-    private val username: String = "",
-    private var password : String = ""
+    private var username: String = "",
+    private var password : String? = ""
 )
 
     : UserDetails {
+
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val authorityList: MutableList<GrantedAuthority> = ArrayList()
         authorityList.add(SimpleGrantedAuthority("ROLE_USER"))
@@ -26,14 +27,16 @@ class ShowShareUser(
     }
 
     override fun getPassword(): String {
-        return password
+        if (password != null) {
+            return password.toString()
+        }
+        else return ""
+
     }
 
     override fun getUsername(): String {
         return username
     }
-
-
     override fun isAccountNonExpired(): Boolean {
         return true
     }
