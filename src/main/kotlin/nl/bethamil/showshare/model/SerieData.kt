@@ -18,26 +18,29 @@ data class Show(
     val vote_count: Int?,
     val homepage: String?,
     var seasons: List<Season>?,
-    var genres : List<Genre>?
-) {init {
-    if (seasons == null) {
-        seasons = emptyList()
+    var genres: List<Genre>?
+) {
+    init {
+        if (seasons == null) {
+            seasons = emptyList()
+        }
+        if (genres == null) {
+            genres = emptyList()
+        }
     }
-    if (genres == null) {
-        genres  = emptyList()
-    }
-}
-    fun getGenresAsString() : String {
+
+    fun getGenresAsString(): String {
         var genreString = ""
-        if (genres?.size!! > 0) {
+        if (genres!!.isNotEmpty()) {
             genres?.forEach { g -> genreString += g.name + ", " }
             genreString = genreString.removeRange(genreString.length - 2, genreString.length)
         }
         return genreString
     }
 
-    constructor() : this(null,null,null,null,null,null,
-        null,null,null,null,null,null, emptyList(), emptyList()
+    constructor() : this(
+        null, null, null, null, null, null,
+        null, null, null, null, null, null, emptyList(), emptyList()
     )
 
 }
@@ -52,6 +55,6 @@ data class Season(
 )
 
 data class Genre(
-    val id : Int,
-    val name : String
+    val id: Int,
+    val name: String
 )
