@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 class WatchedEpisodeImpl(val watchedRepo: ShowWatchedRepo) : WatchedEpisodeService, ModelViewMapper {
     override fun save(watchedEpisodeVM: WatchedEpisodeVM) {
-        print("YEA")
         watchedRepo.save(watchedEpisodeVM.toModel())
     }
 
@@ -28,5 +27,18 @@ class WatchedEpisodeImpl(val watchedRepo: ShowWatchedRepo) : WatchedEpisodeServi
             return false
         }
         return true
+    }
+
+    override fun findWatchedEpisode(watchedEpisodeVM: WatchedEpisodeVM): WatchedEpisodeVM? {
+        val watch = watchedRepo.isInDb(
+            watchedEpisodeVM.showId,
+            watchedEpisodeVM.seasonNumber,
+            watchedEpisodeVM.episodeNumber,
+            watchedEpisodeVM.showShareUser.id!!
+        )
+        if (watch != null) {
+            return watch.toVm()
+        }
+        return null
     }
 }

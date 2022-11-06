@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org">
 <head th:replace="fragments/general :: baseHeader(~{:: title})">
     <title th:text="'ShowShare|' + ${season.getName()} + '-' + ${show.getName()}">Shows</title>
 
@@ -13,14 +13,34 @@
             <div class="col-md-4">
                 <img th:src="@{${'https://image.tmdb.org/t/p/w500' +
                     (season.getPoster_path != null ? season.getPoster_path : show.getPoster_path)}}"
-                     class="img-fluid rounded-start" alt="" style="height: 42vh">
+                     class="img-fluid rounded-start" alt="" style="height: 42vh;">
             </div>
             <div class="col-md-8">
                 <div class="card-body">
-                    <h1 class="card-title" th:text="${show.getName()}">Card title</h1>
-                    <h5 class="card-title" th:text="${season.getName()} == null
+                    <div class="row">
+                        <div class=" col-9">
+                            <h1 class="card-title" th:text="${show.getName()}">Card title</h1>
+                            <h5 class="card-title" th:text="${season.getName()} == null
                         ? 'Loading failed... Try again later' : ${season.getName()}">Card title</h5>
-                    <p class="card-text" th:text="${season.getOverview()}"></p>
+                            <p class="card-text" th:text="${season.getOverview()}"></p>
+                        </div>
+                        <div class="col-3" sec:authorize="isAuthenticated()">
+                            <div class="col-auto mb-3" id="watchedFullSeason">
+                                <button th:onclick="|watchedFullSeason(${show.getId}, ${season.getSeason_number})|"
+                                        class="btn btn-success "
+                                        style="max-height: 10vh" type="submit"
+                                >Watched Season
+                                </button>
+                            </div>
+                            <div class="col-auto mb-3" id="unWatchFullSeason">
+                                <button th:onclick="|unwatchFullSeason(${show.getId}, ${season.getSeason_number})|"
+                                        class="btn btn-danger "
+                                        style="max-height: 10vh" type="submit"
+                                >Unwatch Season
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,7 +59,7 @@
                 <div class="col-md-8">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-10">
+                            <div class="col-9">
                                 <h5 class="card-title"
                                     th:text="${episode.getEpisode_number} + '. ' + ${episode.getName()}"></h5>
 
@@ -47,12 +67,25 @@
                         + '&emsp; Air date: ' + ${episode.getAir_date()}"></small>
                                 <p class="card-text" th:text="${episode.getOverview()}"></p>
                             </div>
-                            <div  class="col-auto watchedButton">
-                                <button th:onclick="|addToWatched(${show.getId}, ${season.getSeason_number}, ${episode.getEpisode_number});   |"
-                                        class="btn btn-success  "
-                                        style="max-height: 5vh" type="submit"
-                                >Watched
-                                </button>
+                            <div sec:authorize="isAuthenticated()" class="col-3 checkButtons">
+                                <div class="watchedButton"
+                                     th:style="${episode.getNotWatched} ? 'display: block' : 'display: none'">
+                                    <button th:onclick="|addToWatched(${show.getId}, ${season.getSeason_number},
+                                    ${episode.getEpisode_number});   |"
+                                            class="btn btn-success  "
+                                            style="max-height: 5vh" type="submit"
+                                    >Watched
+                                    </button>
+                                </div>
+                                <div class="deleteWatchedButton"
+                                     th:style="${episode.getNotWatched} == false ? 'display: block' : 'display: none'">
+                                    <button th:onclick="|deleteWatched(${show.getId}, ${season.getSeason_number},
+                                    ${episode.getEpisode_number});   |"
+                                            class="btn btn-danger  "
+                                            style="max-height: 5vh" type="submit"
+                                    >Unwatch
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -71,11 +104,53 @@
 
     }
 
-    $(document).ready(function test() {
+    function deleteWatched(showId, seasonNumber, episodeNumber) {
+        $.post('/show/deleteWatched/' + showId + '/' + seasonNumber + '/' + episodeNumber);
+
+    }
+
+    function watchedFullSeason(showId, seasonNumber) {
+        $.post('/show/watchedSeason/' + showId + '/' + seasonNumber);
+
+    }
+
+    function unwatchFullSeason(showId, seasonNumber) {
+        $.post('/show/unwatchSeason/' + showId + '/' + seasonNumber);
+
+    }
+
+
+    $(document).ready(function () {
         $(".watchedButton").click(function () {
             $(this).hide();
+            $(this).closest(".checkButtons").find(".deleteWatchedButton").show()
+
         })
-    })
+    });
+
+    $(document).ready(function () {
+        $(".deleteWatchedButton").click(function () {
+            $(this).hide();
+            $(this).closest(".checkButtons").find(".watchedButton").show()
+
+        })
+    });
+
+    $(document).ready(function () {
+        $("#watchedFullSeason").click(function () {
+            $(".watchedButton").hide();
+            $(".deleteWatchedButton").show();
+        })
+    });
+
+    $(document).ready(function () {
+        $("#unWatchFullSeason").click(function () {
+            $(".watchedButton").show();
+            $(".deleteWatchedButton").hide();
+        })
+    });
+
+
 </script>
 
 </body>

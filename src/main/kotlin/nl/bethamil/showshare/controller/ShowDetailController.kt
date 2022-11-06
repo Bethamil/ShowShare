@@ -4,7 +4,6 @@ import nl.bethamil.showshare.model.*
 import nl.bethamil.showshare.service.*
 import nl.bethamil.showshare.viewmodel.ModelViewMapper
 import nl.bethamil.showshare.viewmodel.ShowVM
-import nl.bethamil.showshare.viewmodel.WatchedEpisodeVM
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -23,7 +22,6 @@ class ShowDetailController(
     val showCollectionRepo: ShowCollectionService,
     val showShareUserService: ShowShareUserService,
     val showRatingService: ShowRatingService,
-    val watchedEpisodeService: WatchedEpisodeService,
 ) : ModelViewMapper {
 
     @GetMapping("/show")
@@ -126,51 +124,5 @@ class ShowDetailController(
         }
         showRatingService.save(ratingShow)
         return "redirect:/show/$showId"
-    }
-
-    @GetMapping("/show/{showId}/{seasonNumber}")
-    protected fun seasonDetails(
-        @PathVariable showId: Int,
-        @PathVariable seasonNumber: Int,
-        model: Model,
-        request: HttpServletRequest
-    ): String {
-
-        val seasonData = MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)?.toSeasonDataVM()
-        val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(showId)?.toShowVM()
-
-//        val ifInDbList = seasonData?.episodes?.map { episode -> watchedEpisodeService.isInDb(
-//            watchedEpisodeVM = WatchedEpisodeVM(showId = episode.show_id!!,
-//                seasonNumber = episode.season_number!!,
-//                episodeNumber = episode.episode_number!!, showShareUser = getLoggedInUser(request))) }
-//        println(ifInDbList)
-//        model.addAttribute("ifInDbList", ifInDbList)
-
-        if (seasonData != null) {
-            model.addAttribute("season", seasonData)
-        } else {
-            model.addAttribute("season", SeasonData().toSeasonDataVM())
-        }
-        model.addAttribute("show", selectedShow)
-        return "seasonDetails"
-    }
-
-    @PostMapping("/show/addWatched/{showId}/{seasonNumber}/{episodeNumber}")
-    protected fun saveHaveIWatchedThis(
-        @PathVariable seasonNumber: Int, @PathVariable showId: Int, @PathVariable episodeNumber: Int,
-        request: HttpServletRequest
-
-    ): String {
-        val watchedEpisodeVM = WatchedEpisodeVM(
-            showShareUser = getLoggedInUser(request),
-            showId = showId, seasonNumber = seasonNumber, episodeNumber = episodeNumber
-        )
-        watchedEpisodeService.save(watchedEpisodeVM)
-        println("$seasonNumber/$showId/$episodeNumber")
-        return "redirect:/"
-    }
-
-    protected fun getLoggedInUser(request: HttpServletRequest): ShowShareUser {
-        return showShareUserService.findByUsername(request.userPrincipal.name).get()
     }
 }
