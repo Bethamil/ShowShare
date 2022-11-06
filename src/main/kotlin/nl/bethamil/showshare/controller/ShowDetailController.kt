@@ -1,12 +1,10 @@
 package nl.bethamil.showshare.controller
 
 import nl.bethamil.showshare.model.*
-import nl.bethamil.showshare.service.MovieDbRestService
-import nl.bethamil.showshare.service.ShowCollectionService
-import nl.bethamil.showshare.service.ShowRatingService
-import nl.bethamil.showshare.service.ShowShareUserService
+import nl.bethamil.showshare.service.*
 import nl.bethamil.showshare.viewmodel.ModelViewMapper
 import nl.bethamil.showshare.viewmodel.ShowVM
+import nl.bethamil.showshare.viewmodel.WatchedEpisodeVM
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -25,6 +23,7 @@ class ShowDetailController(
     val showCollectionRepo: ShowCollectionService,
     val showShareUserService: ShowShareUserService,
     val showRatingService: ShowRatingService,
+    val watchedEpisodeService: WatchedEpisodeService,
 ) : ModelViewMapper {
 
     @GetMapping("/show")
@@ -40,7 +39,7 @@ class ShowDetailController(
 
         if (selectedShow != null) {
             model.addAttribute("show", selectedShow)
-        } else{
+        } else {
             model.addAttribute("show", Show().toShowVM())
         }
         val principal: Principal? = request.userPrincipal
@@ -98,7 +97,8 @@ class ShowDetailController(
 
         val principal: Principal = request.userPrincipal
         val currentUser: ShowShareUser = showShareUserService.findByUsername(principal.name).get()
-        val showCollection = showCollectionRepo.findByUserIdAndShowId(show_id = showId,
+        val showCollection = showCollectionRepo.findByUserIdAndShowId(
+            show_id = showId,
             user_id = currentUser.id!!.toLong()
         )
         if (!result.hasErrors()) {
@@ -122,7 +122,7 @@ class ShowDetailController(
         val ratingShow = if (ratingId != -1L) {
             RatingShow(ratingId = ratingId, user = currentUser, rating = rating, showId = showId)
         } else {
-            RatingShow(user=currentUser, rating = rating, showId = showId)
+            RatingShow(user = currentUser, rating = rating, showId = showId)
         }
         showRatingService.save(ratingShow)
         return "redirect:/show/$showId"
@@ -139,6 +139,13 @@ class ShowDetailController(
         val seasonData = MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)?.toSeasonDataVM()
         val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(showId)?.toShowVM()
 
+//        val ifInDbList = seasonData?.episodes?.map { episode -> watchedEpisodeService.isInDb(
+//            watchedEpisodeVM = WatchedEpisodeVM(showId = episode.show_id!!,
+//                seasonNumber = episode.season_number!!,
+//                episodeNumber = episode.episode_number!!, showShareUser = getLoggedInUser(request))) }
+//        println(ifInDbList)
+//        model.addAttribute("ifInDbList", ifInDbList)
+
         if (seasonData != null) {
             model.addAttribute("season", seasonData)
         } else {
@@ -146,5 +153,24 @@ class ShowDetailController(
         }
         model.addAttribute("show", selectedShow)
         return "seasonDetails"
+    }
+
+    @PostMapping("/show/addWatched/{showId}/{seasonNumber}/{episodeNumber}")
+    protected fun saveHaveIWatchedThis(
+        @PathVariable seasonNumber: Int, @PathVariable showId: Int, @PathVariable episodeNumber: Int,
+        request: HttpServletRequest
+
+    ): String {
+        val watchedEpisodeVM = WatchedEpisodeVM(
+            showShareUser = getLoggedInUser(request),
+            showId = showId, seasonNumber = seasonNumber, episodeNumber = episodeNumber
+        )
+        watchedEpisodeService.save(watchedEpisodeVM)
+        println("$seasonNumber/$showId/$episodeNumber")
+        return "redirect:/"
+    }
+
+    protected fun getLoggedInUser(request: HttpServletRequest): ShowShareUser {
+        return showShareUserService.findByUsername(request.userPrincipal.name).get()
     }
 }

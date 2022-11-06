@@ -2,28 +2,29 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head th:replace="fragments/general :: baseHeader(~{:: title})">
     <title th:text="'ShowShare|' + ${season.getName()} + '-' + ${show.getName()}">Shows</title>
+
 </head>
 <body>
 <div th:replace="fragments/general :: navbar"></div>
 
 <div class="container">
-        <div class="card mb-3 bg-dark" style="width: auto">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img th:src="@{${'https://image.tmdb.org/t/p/w500' +
+    <div class="card mb-3 bg-dark" style="width: auto">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img th:src="@{${'https://image.tmdb.org/t/p/w500' +
                     (season.getPoster_path != null ? season.getPoster_path : show.getPoster_path)}}"
-                         class="img-fluid rounded-start" alt="" style="height: 42vh">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h1 class="card-title" th:text="${show.getName()}">Card title</h1>
-                        <h5 class="card-title" th:text="${season.getName()} == null
+                     class="img-fluid rounded-start" alt="" style="height: 42vh">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h1 class="card-title" th:text="${show.getName()}">Card title</h1>
+                    <h5 class="card-title" th:text="${season.getName()} == null
                         ? 'Loading failed... Try again later' : ${season.getName()}">Card title</h5>
-                        <p class="card-text" th:text="${season.getOverview()}"></p>
-                    </div>
+                    <p class="card-text" th:text="${season.getOverview()}"></p>
                 </div>
             </div>
         </div>
+    </div>
 
     <br>
 
@@ -37,10 +38,23 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${episode.getEpisode_number} + '. ' + ${episode.getName()}"/>
-                        <small class="card-text" th:text="'&#11088; ' + ${episode.getVote_average()}
+                        <div class="row">
+                            <div class="col-10">
+                                <h5 class="card-title"
+                                    th:text="${episode.getEpisode_number} + '. ' + ${episode.getName()}"></h5>
+
+                                <small class="card-text" th:text="'&#11088; ' + ${episode.getVote_average()}
                         + '&emsp; Air date: ' + ${episode.getAir_date()}"></small>
-                        <p class="card-text" th:text="${episode.getOverview()}"></p>
+                                <p class="card-text" th:text="${episode.getOverview()}"></p>
+                            </div>
+                            <div  class="col-auto watchedButton">
+                                <button th:onclick="|addToWatched(${show.getId}, ${season.getSeason_number}, ${episode.getEpisode_number});   |"
+                                        class="btn btn-success  "
+                                        style="max-height: 5vh" type="submit"
+                                >Watched
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -48,7 +62,21 @@
     </div>
 </div>
 
+
 <div th:replace="fragments/general :: footer"></div>
 <div th:replace="fragments/general :: bottomScripts"></div>
+<script>
+    function addToWatched(showId, seasonNumber, episodeNumber) {
+        $.post('/show/addWatched/' + showId + '/' + seasonNumber + '/' + episodeNumber);
+
+    }
+
+    $(document).ready(function test() {
+        $(".watchedButton").click(function () {
+            $(this).hide();
+        })
+    })
+</script>
+
 </body>
 </html>

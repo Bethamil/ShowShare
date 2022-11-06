@@ -12,4 +12,6 @@ interface ModelViewMapper {
         vote_average, vote_count, homepage, seasons, genres
     )
 
+    fun WatchedEpisodeVM.toModel() = WatchedEpisode(viewDateId, showShareUser, showId, seasonNumber, episodeNumber)
+    fun WatchedEpisode.toVm() = WatchedEpisodeVM(viewDateId, showShareUser, showId, seasonNumber, episodeNumber)
 }
