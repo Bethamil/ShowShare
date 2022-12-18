@@ -6,11 +6,13 @@ import nl.bethamil.showshare.service.*
 import nl.bethamil.showshare.viewmodel.ModelViewMapper
 import nl.bethamil.showshare.viewmodel.WatchedEpisodeVM
 import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import javax.servlet.http.HttpServletRequest
 
 @Controller
@@ -49,38 +51,35 @@ class SeasonController(
     }
 
     @PostMapping("/show/addWatched/{showId}/{seasonNumber}/{episodeNumber}")
+    @ResponseStatus(value = HttpStatus.OK)
     protected fun saveHaveIWatchedThis(
         @PathVariable seasonNumber: Int, @PathVariable showId: Int, @PathVariable episodeNumber: Int,
-        request: HttpServletRequest
-    ): String {
+        request: HttpServletRequest) {
         val watchedEpisodeVM = WatchedEpisodeVM(
             showShareUser = getLoggedInUser(request),
             showId = showId, seasonNumber = seasonNumber, episodeNumber = episodeNumber
         )
         if (watchedEpisodeService.findWatchedEpisode(watchedEpisodeVM) == null)
             watchedEpisodeService.save(watchedEpisodeVM)
-        return "redirect:/"
     }
 
     @PostMapping("/show/deleteWatched/{showId}/{seasonNumber}/{episodeNumber}")
+    @ResponseStatus(value = HttpStatus.OK)
     protected fun deleteWatched(
         @PathVariable seasonNumber: Int, @PathVariable showId: Int, @PathVariable episodeNumber: Int,
-        request: HttpServletRequest
-    ): String {
+        request: HttpServletRequest) {
         val watchedEpisodeVM = WatchedEpisodeVM(
             showShareUser = getLoggedInUser(request),
             showId = showId, seasonNumber = seasonNumber, episodeNumber = episodeNumber
         )
         watchedEpisodeService.findWatchedEpisode(watchedEpisodeVM)?.let { watchedEpisodeService.delete(it) }
-        return "redirect:/"
-
     }
 
     @PostMapping("/show/watchedSeason/{showId}/{seasonNumber}")
+    @ResponseStatus(value = HttpStatus.OK)
     protected fun saveWatchedSeason(
-        @PathVariable seasonNumber: Int, @PathVariable showId: Int,
-        request: HttpServletRequest
-    ): String {
+        @PathVariable seasonNumber: Int, @PathVariable showId: Int, request: HttpServletRequest,
+    ) {
         val selectedSeason =
             MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)!!.toSeasonDataVM()
         for (episode in selectedSeason.episodes!!) {
@@ -92,14 +91,13 @@ class SeasonController(
                 watchedEpisodeService.save(watchedEpisodeVM)
             }
         }
-        return "redirect:/"
     }
 
     @PostMapping("/show/unwatchSeason/{showId}/{seasonNumber}")
+    @ResponseStatus(value = HttpStatus.OK)
     protected fun unwatchSeason(
         @PathVariable seasonNumber: Int, @PathVariable showId: Int,
-        request: HttpServletRequest
-    ): String {
+        request: HttpServletRequest) {
         val selectedSeason =
             MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)!!.toSeasonDataVM()
         for (episode in selectedSeason.episodes!!) {
@@ -111,7 +109,6 @@ class SeasonController(
                 watchedEpisodeService.findWatchedEpisode(watchedEpisodeVM)?.let { watchedEpisodeService.delete(it) }
             }
         }
-        return "redirect:/"
     }
 
 

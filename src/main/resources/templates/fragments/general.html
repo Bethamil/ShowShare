@@ -32,33 +32,43 @@
                         </ul>
                     </li>
 
-                    <li class="nav-item" sec:authorize="isAnonymous()">
-                        <a class="nav-link active" aria-current="page" th:href="@{/register}">Register</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAnonymous()">
-                        <a class="nav-link active" aria-current="page" th:href="@{/login}">Login</a>
-                    </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
                         <a class="nav-link active" aria-current="page" th:href="@{/myFavorites}">My Favorites &#9825;</a>
                     </li>
 
-                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            <span sec:authentication="name"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
-                        </ul>
-                    </li>
-
                 </ul>
 
-                <form class="d-flex" th:action="@{/search}" role="search" th:object="${query}" method="get">
+                <form class="d-flex navbar-nav" th:action="@{/search}" role="search" th:object="${query}" method="get">
                     <input class="form-control me-2" id="search" name="query" placeholder="Search by title"
                            aria-label="Search" required>
                     <button class="btn btn-outline-success" id="WFF" type="submit">Search</button>
                 </form>
+
+                <p>
+                    &emsp;
+                </p>
+
+                <ul class="navbar-nav" style="font-size: 20px">
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link active" aria-current="page" th:href="@{/register}">Register</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link active" aria-current="page" th:href="@{/login}">Login</a>
+                </li>
+                </ul>
+
+                <ul class="navbar-nav" style="font-size: 20px">
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        <span sec:authentication="name"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                    </ul>
+                </li>
+                </ul>
+
             </div>
         </div>
     </nav>
@@ -68,8 +78,6 @@
     <footer><p class="text-center text text-muted">Copyright Bethamil &copy;2022</p></footer>
 </div>
 <div th:fragment="bottomScripts">
-<!--            <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>-->
-<!--            <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>-->
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
             integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"

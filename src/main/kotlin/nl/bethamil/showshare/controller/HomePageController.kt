@@ -25,6 +25,7 @@ class HomePageController : ModelViewMapper {
         val allShows = MovieDbRestService().getShows(category, pageNumber)?.toAllShowsListVM()!!.results
         model.addAttribute("shows", allShows)
         model.addAttribute("category", category)
+        model.addAttribute("page", pageNumber)
         return "topShowsPage"
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head th:replace="fragments/general :: baseHeader(~{:: title})">
         <title th:if="${category} == 'favorites'">ShowShare|Favorites</title>
         <title th:if="${category} == 'popular'">ShowShare|Popular</title>
@@ -35,13 +35,10 @@
         <br>
         <nav aria-label="...">
             <ul class="pagination pagination-sm justify-content-center">
-                <li class="page-item ">
-                    <a class="page-link" th:href="@{/allShows/{category}/1(category=${category})}" tabindex="-1">1</a>
-                </li>
-                <li class="page-item"><a class="page-link"
-                                         th:href="@{/allShows/{category}/2(category=${category})}">2</a></li>
-                <li class="page-item"><a class="page-link"
-                                         th:href="@{/allShows/{category}/3(category=${category})}">3</a></li>
+                <li th:if="${page} > 1" class="page-item"><a class="page-link"
+                                         th:href="@{/allShows/{category}/{page}(category=${category}, page=${page} - 1)}">Previous page</a></li>
+                <li th:if="${page} < 30" class="page-item"><a class="page-link"
+                                         th:href="@{/allShows/{category}/{page}(category=${category}, page=${page} + 1)}">Next page</a></li>
             </ul>
         </nav>
     </div>
