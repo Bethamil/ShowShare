@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head th:replace="fragments/general :: baseHeader(~{:: title})">
-        <title th:if="${category} == 'favorites'">ShowShare|Favorites</title>
-        <title th:if="${category} == 'popular'">ShowShare|Popular</title>
-        <title th:if="${category} == 'on_the_air'">ShowShare|On the Air</title>
-        <title th:if="${category} == 'top_rated'">ShowShare|Top Rated</title>
+    <title th:if="${category} == 'favorites'">ShowShare|Favorites</title>
+    <title th:if="${category} == 'popular'">ShowShare|Popular</title>
+    <title th:if="${category} == 'on_the_air'">ShowShare|On the Air</title>
+    <title th:if="${category} == 'top_rated'">ShowShare|Top Rated</title>
+    <title th:if="${category} == 'watchlist'">ShowShare|Watchlist</title>
 </head>
 <body>
 <div th:replace="fragments/general :: navbar"></div>
@@ -14,7 +15,10 @@
         <h1 th:case="top_rated">Top Rated</h1>
         <h1 th:case="on_the_air">On the Air</h1>
         <h1 th:case="favorites">My Favorites</h1>
+        <h1 th:case="watchlist">Watchlist</h1>
     </div>
+
+    <p th:if="${#lists.isEmpty(shows)}" th:text="'Try adding some shows to your ' + ${category}"></p>
 
 
     <div class="row  row-cols-lg-5 row-cols-md-4 row-cols-sm-2 g-4 ">
@@ -32,15 +36,20 @@
         </div>
     </div>
     <div th:if="${category != 'favorites'}">
-        <br>
-        <nav aria-label="...">
-            <ul class="pagination pagination-sm justify-content-center">
-                <li th:if="${page} > 1" class="page-item"><a class="page-link"
-                                         th:href="@{/allShows/{category}/{page}(category=${category}, page=${page} - 1)}">Previous page</a></li>
-                <li th:if="${page} < 30" class="page-item"><a class="page-link"
-                                         th:href="@{/allShows/{category}/{page}(category=${category}, page=${page} + 1)}">Next page</a></li>
-            </ul>
-        </nav>
+        <div th:if="${category != 'watchlist'}">
+
+            <br>
+            <nav aria-label="...">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <li th:if="${page} > 1" class="page-item"><a class="page-link"
+                                                                 th:href="@{/allShows/{category}/{page}(category=${category}, page=${page} - 1)}">Previous
+                        page</a></li>
+                    <li th:if="${page} < 30" class="page-item"><a class="page-link"
+                                                                  th:href="@{/allShows/{category}/{page}(category=${category}, page=${page} + 1)}">Next
+                        page</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
 
 
