@@ -22,7 +22,8 @@
                     <h1 class="card-title" th:text="${show.getName()} == null ? 'Loading failed... Try again later'
                     : ${show.getName()}">Card title</h1>
                     <p th:text="${show.getGenresAsString()}"></p>
-                    <a th:if="${show.getHomepage} != ''" class="link-success" th:href="${show.getHomepage}">Official Website</a>
+                    <a th:if="${show.getHomepage} != ''" class="link-success" th:href="${show.getHomepage}">Official
+                        Website</a>
 
 
                     <!-- Buttons -->
@@ -32,9 +33,9 @@
                         <div class="">
                             <!-- Button trigger modal -->
                             <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                    th:text="${ratingFromDB.getRating()} != null ?'Your Rating: '
-                                    + ${ratingFromDB.getRating()} : 'Give Rating'">
+                                    data-bs-target="#exampleModal">
+                                <span th:text="${ratingFromDB.getRating()} != null ?'Your Rating: '
+                                + ${ratingFromDB.getRating()} : 'Give Rating'"></span> <i class="fa-regular fa-star"></i>
                             </button>
 
                             <!-- Modal -->
@@ -75,17 +76,33 @@
                         </div>
 
                         <!-- Save to Favorites-->
-                        <div class="col" th:object="${saveShowId}" th:switch="${notAdded}">
+                        <div class="col" th:object="${saveShowId}" th:switch="${notAddedToFavorites}">
 
-                            <form th:action="@{/show/add}" method="post">
+                            <form th:action="@{/show/addToFavorites}" th:case="true" method="post">
                                 <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
-                                <input th:case="true" class="btn btn-danger" type="submit"
-                                       value="Add to Favorites &#9825;">
+                                <button class="btn btn-danger" type="submit">Add to favorites <i
+                                        class="fa-regular fa-heart"></i></button>
                             </form>
-                            <form th:action="@{/show/delete}" method="post">
+                            <form th:action="@{/show/deleteFromFavorites}" th:case="*" method="post">
                                 <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
-                                <input th:case="*" class=" btn btn-danger" type="submit"
-                                       value="Delete from Favorites &#9825;">
+                                <button class="btn btn-danger" type="submit">Delete from favorites <i
+                                        class="fa-regular fa-heart"></i></button>
+                            </form>
+                        </div>
+
+                        <!--                        Add to watchlist-->
+                        <div class="col" th:object="${saveShowId}" th:switch="${notAddedToWatchlist}">
+
+                            <form th:action="@{/show/addToWatchList}" method="post">
+                                <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
+                                <button th:case="true" class="btn btn-warning" type="submit">Add to Watchlist <i
+                                        class="fa-regular fa-eye"></i></button>
+                            </form>
+                            <form th:action="@{/show/deleteFromWatchlist}" method="post">
+                                <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
+                                <button th:case="*" class="btn btn-warning" type="submit">Delete from Watchlist <i
+                                        class="fa-regular fa-eye"></i>
+                                </button>
                             </form>
                         </div>
 

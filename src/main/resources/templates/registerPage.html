@@ -7,12 +7,13 @@
 <div th:replace="fragments/general :: navbar"></div>
 
 <div class="container justify-content-center">
-    <div class="card bg-dark mx-auto" style="margin-top: 100px; margin-bottom: 10px">
+    <div class="card bg-dark mx-auto user-card" style="margin-top: 100px; margin-bottom: 10px">
         <div class="card-header">
             <h1>Register</h1>
         </div>
         <div class="card-body">
             <p>Register to create your own collection of tv-shows</p>
+            <p th:if="${alreadyInDb}" class="text-danger">Username already exists</p>
             <form th:action="@{/register/new}" method="post" th:object="${newUser}">
                 <div class="mb-3">
                     <label for="usernameInput" class="form-label">Username</label>

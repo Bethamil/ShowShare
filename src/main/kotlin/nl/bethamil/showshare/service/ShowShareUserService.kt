@@ -1,10 +1,10 @@
 package nl.bethamil.showshare.service
 
-import nl.bethamil.showshare.model.ShowShareUser
-import java.util.*
+import nl.bethamil.showshare.viewmodel.ShowShareRegisterUserVM
+import nl.bethamil.showshare.viewmodel.ShowShareUserVM
 
 interface ShowShareUserService {
-    fun save(user : ShowShareUser)
-    fun findByUsername(username: String?): Optional<ShowShareUser>
+    fun save(user : ShowShareRegisterUserVM)
+    fun findByUsername(username: String?): ShowShareUserVM?
 
 }

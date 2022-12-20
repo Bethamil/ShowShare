@@ -1,9 +1,8 @@
 package nl.bethamil.showshare.controller
 
 import nl.bethamil.showshare.model.SeasonData
-import nl.bethamil.showshare.model.ShowShareUser
 import nl.bethamil.showshare.service.*
-import nl.bethamil.showshare.viewmodel.ModelViewMapper
+import nl.bethamil.showshare.viewmodel.ShowShareUserVM
 import nl.bethamil.showshare.viewmodel.WatchedEpisodeVM
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpStatus
@@ -18,9 +17,8 @@ import javax.servlet.http.HttpServletRequest
 @Controller
 class SeasonController(
     val showShareUserService: ShowShareUserService,
-
-    val watchedEpisodeService: WatchedEpisodeService,
-) : ModelViewMapper {
+    val watchedEpisodeService: WatchedEpisodeService
+) {
 
     @GetMapping("/show/{showId}/{seasonNumber}")
     protected fun seasonDetails(
@@ -28,7 +26,7 @@ class SeasonController(
         model: Model,
         request: HttpServletRequest
     ): String {
-        val seasonData = MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)?.toSeasonDataVM()
+        val seasonData = MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)
         if (seasonData != null && request.userPrincipal != null) {
             seasonData.episodes?.forEach { e ->
                 e.notWatched = watchedEpisodeService.isInDb(
@@ -39,12 +37,12 @@ class SeasonController(
                 )
             }
         }
-        val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(showId)?.toShowVM()
+        val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(showId)
 
         if (seasonData != null) {
             model.addAttribute("season", seasonData)
         } else {
-            model.addAttribute("season", SeasonData().toSeasonDataVM())
+            model.addAttribute("season", SeasonData())
         }
         model.addAttribute("show", selectedShow)
         return "seasonDetails"
@@ -54,7 +52,8 @@ class SeasonController(
     @ResponseStatus(value = HttpStatus.OK)
     protected fun saveHaveIWatchedThis(
         @PathVariable seasonNumber: Int, @PathVariable showId: Int, @PathVariable episodeNumber: Int,
-        request: HttpServletRequest) {
+        request: HttpServletRequest
+    ) {
         val watchedEpisodeVM = WatchedEpisodeVM(
             showShareUser = getLoggedInUser(request),
             showId = showId, seasonNumber = seasonNumber, episodeNumber = episodeNumber
@@ -67,7 +66,8 @@ class SeasonController(
     @ResponseStatus(value = HttpStatus.OK)
     protected fun deleteWatched(
         @PathVariable seasonNumber: Int, @PathVariable showId: Int, @PathVariable episodeNumber: Int,
-        request: HttpServletRequest) {
+        request: HttpServletRequest
+    ) {
         val watchedEpisodeVM = WatchedEpisodeVM(
             showShareUser = getLoggedInUser(request),
             showId = showId, seasonNumber = seasonNumber, episodeNumber = episodeNumber
@@ -81,7 +81,7 @@ class SeasonController(
         @PathVariable seasonNumber: Int, @PathVariable showId: Int, request: HttpServletRequest,
     ) {
         val selectedSeason =
-            MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)!!.toSeasonDataVM()
+            MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)!!
         for (episode in selectedSeason.episodes!!) {
             val watchedEpisodeVM = WatchedEpisodeVM(
                 showShareUser = getLoggedInUser(request),
@@ -97,9 +97,10 @@ class SeasonController(
     @ResponseStatus(value = HttpStatus.OK)
     protected fun unwatchSeason(
         @PathVariable seasonNumber: Int, @PathVariable showId: Int,
-        request: HttpServletRequest) {
+        request: HttpServletRequest
+    ) {
         val selectedSeason =
-            MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)!!.toSeasonDataVM()
+            MovieDbRestService(RestTemplateBuilder()).getSeasonInfo(showId, seasonNumber)!!
         for (episode in selectedSeason.episodes!!) {
             val watchedEpisodeVM = WatchedEpisodeVM(
                 showShareUser = getLoggedInUser(request),
@@ -111,9 +112,7 @@ class SeasonController(
         }
     }
 
-
-
-    protected fun getLoggedInUser(request: HttpServletRequest): ShowShareUser {
-        return showShareUserService.findByUsername(request.userPrincipal.name).get()
+    protected fun getLoggedInUser(request: HttpServletRequest): ShowShareUserVM {
+        return showShareUserService.findByUsername(request.userPrincipal.name)!!
     }
 }

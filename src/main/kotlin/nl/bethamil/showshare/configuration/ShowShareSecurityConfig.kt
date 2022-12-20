@@ -1,6 +1,6 @@
 package nl.bethamil.showshare.configuration
 
-import nl.bethamil.showshare.service.ShowShareUserDetailService
+import nl.bethamil.showshare.service.userDetailService.ShowShareUserDetailService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile

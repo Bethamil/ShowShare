@@ -11,7 +11,7 @@ class ShowShareUser(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
-    open var id: Long? = null,
+    var id: Long? = null,
 
     @Column(name= "username", unique = true )
     private var username: String = "",

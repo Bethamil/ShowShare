@@ -3,11 +3,11 @@ package nl.bethamil.showshare.model
 import javax.persistence.*
 
 @Entity
-data class WatchedEpisode(
+class WatchedEpisode(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "watched_episode_id", nullable = false)
-    open var viewDateId: Long? = null,
+    var viewDateId: Long? = null,
 
     @ManyToOne
     val showShareUser: ShowShareUser,

@@ -2,127 +2,145 @@ package nl.bethamil.showshare.controller
 
 import nl.bethamil.showshare.model.*
 import nl.bethamil.showshare.service.*
-import nl.bethamil.showshare.viewmodel.ModelViewMapper
-import nl.bethamil.showshare.viewmodel.ShowVM
+import nl.bethamil.showshare.viewmodel.MyFavoritesVM
+import nl.bethamil.showshare.viewmodel.RatingShowVM
+import nl.bethamil.showshare.viewmodel.ShowShareUserVM
+import nl.bethamil.showshare.viewmodel.WatchlistVM
 import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import java.security.Principal
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 
 @Controller
 class ShowDetailController(
-    val showCollectionRepo: ShowCollectionService,
+    val myFavoritesService: MyFavoritesService,
     val showShareUserService: ShowShareUserService,
     val showRatingService: ShowRatingService,
-) : ModelViewMapper {
-
-    @GetMapping("/show")
-    protected fun showPopulairSeries(model: Model): String {
-        val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(113988)
-        model.addAttribute("show", selectedShow)
-        return "showDetails"
-    }
+    val watchlistService: WatchlistService
+) {
 
     @GetMapping("/show/{showId}")
     protected fun clickShow(@PathVariable showId: Int, model: Model, request: HttpServletRequest): String {
-        val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(showId)?.toShowVM()
+        val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(showId)
 
         if (selectedShow != null) {
             model.addAttribute("show", selectedShow)
         } else {
-            model.addAttribute("show", Show().toShowVM())
+            model.addAttribute("show", Show())
         }
-        val principal: Principal? = request.userPrincipal
-
-        addModelAttributes(principal, selectedShow, model)
-
+        addModelAttributes(request, selectedShow, model)
         return "showDetails"
     }
 
     private fun addModelAttributes(
-        principal: Principal?,
-        selectedShow: ShowVM?,
+        request: HttpServletRequest,
+        selectedShow: Show?,
         model: Model
     ) {
-        if (principal != null) {
-            val userId: Long? = showShareUserService.findByUsername(principal.name).get().id
-            if (selectedShow?.id?.let { showCollectionRepo.findByUserIdAndShowId(it.toLong(), userId!!).isEmpty }
+        if (request.userPrincipal != null) {
+            val userId: Long? = getLoggedInUser(request).id
+            buttonChecks(selectedShow, userId, model)
+            if (selectedShow?.id?.toLong()?.let { showRatingService.findByUserIdAndShowId(it, userId!!) != null }
                 == true) {
-                model.addAttribute("notAdded", true)
-            }
-            if (selectedShow?.id?.toLong()?.let { showRatingService.findByUserIdAndShowId(it, userId!!).isPresent }
-                == true) {
-                val selectedRating: RatingShow =
-                    showRatingService.findByUserIdAndShowId(selectedShow.id!!.toLong(), userId!!).get()
-                model.addAttribute("ratingFromDB", selectedRating.toRatinVM())
+                val selectedRating =
+                    showRatingService.findByUserIdAndShowId(selectedShow.id.toLong(), userId!!)
+                model.addAttribute("ratingFromDB", selectedRating)
             } else {
-                val ratingShow = RatingShow(ratingId = -1)
-                model.addAttribute("ratingFromDB", ratingShow.toRatinVM())
+                val ratingShow = RatingShowVM(ratingId = -1)
+                model.addAttribute("ratingFromDB", ratingShow)
             }
         }
     }
 
-    @PostMapping("/show/add")
-    protected fun addToCollection(
-        @ModelAttribute("saveShowId") showId: Long,
-        result: BindingResult,
-        request: HttpServletRequest
-    ): String {
-
-        val principal: Principal = request.userPrincipal
-        val currentUser: ShowShareUser = showShareUserService.findByUsername(principal.name).get()
-        val showCollection = ShowCollection(showId = showId, user = currentUser)
-        if (!result.hasErrors()) {
-            showCollectionRepo.save(showCollection)
+    private fun buttonChecks(
+        selectedShow: Show?,
+        userId: Long?,
+        model: Model
+    ) {
+        if (selectedShow?.id?.let { myFavoritesService.findByUserIdAndShowId(it.toLong(), userId!!) == null }
+            == true) {
+            model.addAttribute("notAddedToFavorites", true)
         }
+        if (selectedShow?.id?.let {
+                watchlistService.findByUserIdAndShowId(
+                    it.toLong(),
+                    userId!!
+                ) == null
+            } == true) {
+            model.addAttribute("notAddedToWatchlist", true)
+        }
+    }
+
+    @PostMapping("/show/addToFavorites")
+    protected fun addToCollection(
+        @ModelAttribute("saveShowId") showId: Long, request: HttpServletRequest
+    ): String {
+        val currentUser = getLoggedInUser(request)
+        val myFavorites = MyFavoritesVM(showId = showId, user = currentUser)
+        myFavoritesService.save(myFavorites)
         return "redirect:/show/$showId"
     }
 
-    @PostMapping("/show/delete")
+    @PostMapping("/show/addToWatchList")
+    protected fun addToWatchlist(
+        @ModelAttribute("saveShowId") showId: Long, request: HttpServletRequest
+    ): String {
+        val currentUser = getLoggedInUser(request)
+        val watchlistVM = WatchlistVM(showId = showId, showShareUserVM = currentUser)
+        watchlistService.save(watchlistVM)
+        return "redirect:/show/$showId"
+    }
+
+    @PostMapping("/show/deleteFromFavorites")
     protected fun deleteFromCollection(
-        @ModelAttribute("saveShowId") showId: Long,
-        result: BindingResult,
-        request: HttpServletRequest
+        @ModelAttribute("saveShowId") showId: Long, request: HttpServletRequest
     ): String {
 
-        val principal: Principal = request.userPrincipal
-        val currentUser: ShowShareUser = showShareUserService.findByUsername(principal.name).get()
-        val showCollection = showCollectionRepo.findByUserIdAndShowId(
+        val currentUser = getLoggedInUser(request)
+        val showCollection = myFavoritesService.findByUserIdAndShowId(
             show_id = showId,
             user_id = currentUser.id!!.toLong()
         )
-        if (!result.hasErrors()) {
-            println(showCollection.toString() + "DELETED")
-            showCollectionRepo.delete(showCollection.get())
-        }
+        myFavoritesService.deleteById(showCollection?.id!!)
+        return "redirect:/show/$showId"
+    }
+
+    @PostMapping("/show/deleteFromWatchlist")
+    protected fun deleteFromWatchlist(@ModelAttribute("saveShowId") showId: Long, request: HttpServletRequest)
+            : String {
+        val currentUser = getLoggedInUser(request)
+        val watchlistVM = watchlistService.findByUserIdAndShowId(user_id = currentUser.id!!, show_id = showId)
+        watchlistService.deleteById(watchlistVM!!.watchlistId!!)
         return "redirect:/show/$showId"
     }
 
     @PostMapping("/show/addRating")
     protected fun addRating(
-        @ModelAttribute("saveShowId") showId: Long,
-        @ModelAttribute("yourRating") rating: Double,
-        @ModelAttribute("ratingDB") ratingId: Long,
-        result: BindingResult,
-        request: HttpServletRequest
+        @ModelAttribute("saveShowId") showId: Long, @ModelAttribute("yourRating") rating: Double,
+        @ModelAttribute("ratingDB") ratingId: Long, request: HttpServletRequest
     ): String {
-
-        val principal: Principal = request.userPrincipal
-        val currentUser: ShowShareUser = showShareUserService.findByUsername(principal.name).get()
+        if (rating > 10 || rating < 1) {
+            throw ResponseStatusException(HttpStatus.NOT_ACCEPTABLE)
+        }
+        val currentUser = getLoggedInUser(request)
         val ratingShow = if (ratingId != -1L) {
-            RatingShow(ratingId = ratingId, user = currentUser, rating = rating, showId = showId)
+            RatingShowVM(ratingId = ratingId, user = currentUser, rating = rating, showId = showId)
         } else {
-            RatingShow(user = currentUser, rating = rating, showId = showId)
+            RatingShowVM(user = currentUser, rating = rating, showId = showId)
         }
         showRatingService.save(ratingShow)
         return "redirect:/show/$showId"
+    }
+
+    private fun getLoggedInUser(request: HttpServletRequest): ShowShareUserVM {
+        return showShareUserService.findByUsername(request.userPrincipal.name)!!
     }
 }

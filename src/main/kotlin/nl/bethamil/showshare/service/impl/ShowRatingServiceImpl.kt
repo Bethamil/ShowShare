@@ -1,19 +1,23 @@
 package nl.bethamil.showshare.service.impl
 
-import nl.bethamil.showshare.model.RatingShow
+import nl.bethamil.showshare.mapper.ModelViewMapper
 import nl.bethamil.showshare.repository.ShowRatingRepo
 import nl.bethamil.showshare.service.ShowRatingService
+import nl.bethamil.showshare.viewmodel.RatingShowVM
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
-class ShowRatingServiceImpl(private val showRatingRepo: ShowRatingRepo) : ShowRatingService {
+class ShowRatingServiceImpl(private val showRatingRepo: ShowRatingRepo) : ShowRatingService, ModelViewMapper {
 
-    override fun save(ratingShow: RatingShow): RatingShow {
-        return showRatingRepo.save(ratingShow)
+    override fun save(ratingShowVM: RatingShowVM) {
+        showRatingRepo.save(ratingShowVM.toModel())
     }
 
-    override fun findByUserIdAndShowId(show_id: Long, user_id: Long): Optional<RatingShow> {
-        return showRatingRepo.findByUserIdAndShowId(show_id, user_id)
+    override fun findByUserIdAndShowId(show_id: Long, user_id: Long): RatingShowVM? {
+        val rating = showRatingRepo.findByUserIdAndShowId(show_id, user_id)
+        if(rating.isPresent) {
+            return rating.get().toVM()
+        }
+        return null
     }
 }

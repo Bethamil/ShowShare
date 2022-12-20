@@ -8,7 +8,6 @@ class RatingShow(
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "rating_id", nullable = false)
     var ratingId: Long? = null,
-
     @ManyToOne
     val user : ShowShareUser? = null,
     val rating : Double? = null,

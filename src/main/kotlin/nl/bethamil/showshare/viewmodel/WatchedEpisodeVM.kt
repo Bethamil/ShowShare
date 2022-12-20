@@ -1,13 +1,9 @@
 package nl.bethamil.showshare.viewmodel
 
-import nl.bethamil.showshare.model.ShowShareUser
-
-class WatchedEpisodeVM(
+data class WatchedEpisodeVM(
     var viewDateId: Long? = null,
-    val showShareUser: ShowShareUser,
-    val showId : Int,
-    val seasonNumber : Int,
-    val episodeNumber : Int
+    val showShareUser: ShowShareUserVM,
+    val showId: Int,
+    val seasonNumber: Int,
+    val episodeNumber: Int
 )
- {
-}

@@ -23,8 +23,6 @@ class MovieDbRestService(restTemplateBuilder: RestTemplateBuilder = RestTemplate
             val url =
                 "https://api.themoviedb.org/3/tv/{category}?api_key={apiKey}&language=en-US"
             return restTemplate.getForObject(url, SerieData::class.java, category, MOVIEDBKEY)
-
-
         }
 
         val url =

@@ -29,14 +29,14 @@
                                 <button th:onclick="|watchedFullSeason(${show.getId}, ${season.getSeason_number})|"
                                         class="btn btn-success "
                                         style="max-height: 10vh" type="submit"
-                                >Watched Season
+                                >Watched Season <i class="fa-regular fa-eye"></i>
                                 </button>
                             </div>
                             <div class="col-auto mb-3" id="unWatchFullSeason">
                                 <button th:onclick="|unwatchFullSeason(${show.getId}, ${season.getSeason_number})|"
                                         class="btn btn-danger "
                                         style="max-height: 10vh" type="submit"
-                                >Unwatch Season
+                                >Unwatch Season <i class="fa-regular fa-eye-slash"></i>
                                 </button>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
                                     ${episode.getEpisode_number});   |"
                                             class="btn btn-success  "
                                             style="max-height: 5vh" type="submit"
-                                    >Watched
+                                    >Watch <i class="fa-regular fa-eye"></i>
                                     </button>
                                 </div>
                                 <div class="deleteWatchedButton"
@@ -83,7 +83,7 @@
                                     ${episode.getEpisode_number});   |"
                                             class="btn btn-danger  "
                                             style="max-height: 5vh" type="submit"
-                                    >Unwatch
+                                    >Unwatch <i class="fa-regular fa-eye-slash"></i>
                                     </button>
                                 </div>
                             </div>
