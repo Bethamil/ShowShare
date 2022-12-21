@@ -10,9 +10,9 @@
 
     <div class="card bg-dark mx-auto user-card" style="margin-top: 100px; margin-bottom: 10px">
         <div class="card-header">
-            <h1>Please Log In</h1>
+            <h1 class="text-center">Please Log In</h1>
         </div>
-        <div class="card-body">
+        <div class="card-body mx-5">
             <div th:if="${param.error}" style="color: red">
                 Invalid username and password.
             </div>
@@ -22,14 +22,16 @@
             <form th:action="@{/login}" method="post">
                 <div class="mb-3">
                     <label for="usernameInput" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="usernameInput" name="username" placeholder="Enter username"/>
+                    <input type="text" class="form-control" id="usernameInput" name="username" placeholder="Enter username" required/>
                 </div>
                 <div class="mb-3">
                     <label for="inputPassword" class="form-label">Password</label>
                     <input type="password" class="form-control" id="inputPassword" name="password"
-                           placeholder="Enter password"/>
+                           placeholder="Enter password" required/>
                 </div>
-                <input class="btn btn-success" type="submit" value="Log in"/>
+                <div class="text-center">
+                <input class="btn btn-success large-button" type="submit" value="Log in"/>
+                </div>
             </form>
 
             <div class="container" sec:authorize="isAuthenticated()">

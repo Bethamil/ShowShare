@@ -1,6 +1,7 @@
 package nl.bethamil.showshare.controller
 
-import nl.bethamil.showshare.model.ShowShareUser
+import nl.bethamil.showshare.reCaptcha.Captcha
+import nl.bethamil.showshare.service.CaptchaService
 import nl.bethamil.showshare.service.ShowShareUserService
 import nl.bethamil.showshare.viewmodel.ShowShareRegisterUserVM
 import org.hibernate.bytecode.BytecodeLogging.LOGGER
@@ -16,7 +17,10 @@ import javax.servlet.http.HttpServletRequest
 
 
 @Controller
-class UserController(val passwordEncoder: PasswordEncoder, val showShareUserService: ShowShareUserService) {
+class UserController(
+    val passwordEncoder: PasswordEncoder, val showShareUserService: ShowShareUserService,
+    val captchaService: CaptchaService
+) {
 
     @GetMapping("/login")
     protected fun login(): String {
@@ -31,24 +35,41 @@ class UserController(val passwordEncoder: PasswordEncoder, val showShareUserServ
 
     @PostMapping("/register/new")
     protected fun newUser(
-        @ModelAttribute("newUser") showShareUser: ShowShareRegisterUserVM, result: BindingResult,
+        @ModelAttribute("newUser") showShareUser: ShowShareRegisterUserVM,
+        @ModelAttribute("retypedPassword") checkPW: String, result: BindingResult,
         request: HttpServletRequest, model: Model
     ): String {
         if (!result.hasErrors()) {
-            val newUser = ShowShareRegisterUserVM(
-                username = showShareUser.username.trim(),
+            val newUser = ShowShareRegisterUserVM(username = showShareUser.username.trim(),
                 password = passwordEncoder.encode(showShareUser.password)
             )
-            try {
+            val checkPassword = checkPassword(showShareUser.password!!, checkPW)
+            val checkRecaptcha = checkRecaptcha(request)
+            val checkUsername = checkUsername(showShareUser.username)
+
+            if (checkPassword && checkRecaptcha && checkUsername) {
                 showShareUserService.save(newUser)
-            } catch (_: Exception) {
-                model.addAttribute("newUser", ShowShareUser())
-                model.addAttribute("alreadyInDb", true)
-                return "registerPage"
+                authWithHttpServletRequest(request = request, username = newUser.username,
+                    password = showShareUser.password
+                )
+            } else {
+                return addErrors(model, checkPassword, checkRecaptcha, checkUsername)
             }
-            authWithHttpServletRequest(request = request, username = newUser.username, password = showShareUser.password)
         }
         return "redirect:/"
+    }
+
+    private fun addErrors(
+        model: Model,
+        checkPassword: Boolean,
+        checkRecaptcha: Boolean,
+        checkUsername: Boolean
+    ): String {
+        model.addAttribute("showAlertScreen", true)
+        model.addAttribute("notSamePassword", checkPassword)
+        model.addAttribute("noFailRecaptcha", checkRecaptcha)
+        model.addAttribute("noFailUsername", checkUsername)
+        return "registerPage"
     }
 
     fun authWithHttpServletRequest(request: HttpServletRequest, username: String?, password: String?) {
@@ -58,5 +79,19 @@ class UserController(val passwordEncoder: PasswordEncoder, val showShareUserServ
         } catch (e: ServletException) {
             LOGGER.error("Error while login ", e)
         }
+    }
+
+    fun checkRecaptcha(request: HttpServletRequest): Boolean {
+        val response = request.getParameter("g-recaptcha-response")
+        val captcha = Captcha(System.getenv("recaptchaSecret"), response)
+        return captchaService.verify(captcha)!!.success
+    }
+
+    fun checkPassword(password: String, pwCheck: String): Boolean {
+        return password == pwCheck
+    }
+
+    fun checkUsername(name: String): Boolean {
+        return showShareUserService.findByUsername(name) == null
     }
 }

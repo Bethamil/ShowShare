@@ -73,8 +73,39 @@ body {
     transform: rotateY(180deg);
 }
 
+#g-recaptcha-response {
+    display: block !important;
+    position: absolute;
+    margin: -78px 0 0 0 !important;
+    width: 302px !important;
+    height: 76px !important;
+    z-index: -999999;
+    opacity: 0;
+}
+
+.g-recaptcha {
+    text-align: center;
+    display: inline-block;
+}
+
+.large-button {
+    width: 150px;
+    height: 50px;
+}
+
 @media (min-width: 900px) { .user-card {
     width: 800px;
 }
-    
+    .user-form {
+        max-width: 500px;
+    }
+
+}
+
+@media (max-width: 899px) {
+    .g-recaptcha {
+        transform:scale(0.8);
+        transform-origin:0 0;
+    }
+
 }

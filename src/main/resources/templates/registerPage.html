@@ -3,29 +3,50 @@
 <head th:replace="fragments/general :: baseHeader(~{:: title})">
     <title>Register</title>
 </head>
+<script src='https://www.google.com/recaptcha/api.js' async defer></script>
 <body>
 <div th:replace="fragments/general :: navbar"></div>
 
 <div class="container justify-content-center">
-    <div class="card bg-dark mx-auto user-card" style="margin-top: 100px; margin-bottom: 10px">
+    <div class="card bg-dark mx-auto user-card" style="margin-top: 30px; margin-bottom: 10px">
         <div class="card-header">
-            <h1>Register</h1>
+            <h1 class="text-center">Register</h1>
         </div>
-        <div class="card-body">
-            <p>Register to create your own collection of tv-shows</p>
-            <p th:if="${alreadyInDb}" class="text-danger">Username already exists</p>
-            <form th:action="@{/register/new}" method="post" th:object="${newUser}">
-                <div class="mb-3">
+        <div class="card-body mx-5">
+            <p class="text-center">Register to create your own collection of tv-shows</p>
+            <div th:if="${showAlertScreen}" class="alert alert-danger w-75 alertWrap mx-auto">
+                <ul class="mb-0">
+                    <li th:if="${noFailUsername} == false">An account with this username already exists</li>
+                    <li th:if="${noFailRecaptcha} == false">Recaptcha failed. Please try again</li>
+                    <li th:if="${notSamePassword} == false">Passwords did not match</li>
+                </ul>
+            </div>
+            <form th:action="@{/register/new}" method="post" th:object="${newUser}" id="registerForm" class="">
+                <div class="mb-4">
                     <label for="usernameInput" class="form-label">Username</label>
                     <input type="text" class="form-control" id="usernameInput" th:field="*{username}"
-                           placeholder="Enter username"/>
+                           placeholder="Enter username" required/>
                 </div>
-                <div class="mb-3">
+                <div class="mb-1">
                     <label for="inputPassword" class="form-label">Password</label>
                     <input type="password" class="form-control" id="inputPassword" th:field="*{password}"
-                           placeholder="Enter password"/>
+                           placeholder="Enter password" required/>
                 </div>
-                <input class="btn btn-success" type="submit" value="Log in"/>
+                <div class="mb-3">
+                    <label for="retypedPassword" class="form-label">Re-enter Password</label>
+                    <input type="password" class="form-control" id="retypedPassword" name="retypedPassword"
+                           placeholder="Enter password" required/>
+                </div>
+                <div class="text-center">
+                <div class="g-recaptcha"
+                     th:attr="data-sitekey=${@captchaSettings.site}"></div>
+                <span id="captchaError" class="alert alert-danger col-sm-4"
+                      style="display:none"></span>
+                </div>
+                <br>
+                <div class="text-center">
+                <input class="btn btn-success large-button" type="submit" value="Register"/>
+                </div>
             </form>
         </div>
     </div>
@@ -34,6 +55,14 @@
 
 
 <div th:replace="fragments/general :: footer"></div>
+<script>
+    window.addEventListener('load', () => {
+        const $recaptcha = document.querySelector('#g-recaptcha-response');
+        if ($recaptcha) {
+            $recaptcha.setAttribute('required', 'required');
+        }
+    })
+</script>
 <div th:replace="fragments/general :: bottomScripts"></div>
 </body>
 </html>

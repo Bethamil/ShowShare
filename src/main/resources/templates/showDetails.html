@@ -124,8 +124,8 @@
     <br>
     <div class="row row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
         <div th:each="season : ${show.getSeasons()}">
-            <div class="col flip-card">
-                <div class="card text-bg-dark  flip-card-inner">
+            <div class="col flip-card mx-auto">
+                <div class="card text-bg-dark  flip-card-inner ">
                     <img th:src="@{${'https://image.tmdb.org/t/p/w500' + (season.getPoster_path != null ?
                     season.getPoster_path : 'https://image.tmdb.org/t/p/w500' + show.getPoster_path)}} "
                          class="card-img flip-card-front"
