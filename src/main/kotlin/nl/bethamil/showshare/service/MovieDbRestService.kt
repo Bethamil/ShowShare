@@ -3,6 +3,7 @@ package nl.bethamil.showshare.service
 import nl.bethamil.showshare.model.SeasonData
 import nl.bethamil.showshare.model.SerieData
 import nl.bethamil.showshare.model.Show
+import nl.bethamil.showshare.tmdbApi.ShowVideos
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
@@ -45,5 +46,15 @@ class MovieDbRestService(restTemplateBuilder: RestTemplateBuilder = RestTemplate
     fun getSeasonInfo(showId: Int, seasonNumber : Int) : SeasonData? {
         val url = "https://api.themoviedb.org/3/tv/{showId}/season/{seasonNumber}?api_key={apiKey}&language=en-US"
         return restTemplate.getForObject(url, SeasonData::class.java, showId ,seasonNumber, MOVIEDBKEY)
+    }
+
+    fun getShowTrailer(showId: Int) : ShowVideos? {
+        val url = "https://api.themoviedb.org/3/tv/{showId}/videos?api_key={apiKey}&language=en-US"
+        return restTemplate.getForObject(url, ShowVideos::class.java, showId, MOVIEDBKEY)
+    }
+
+    fun getSeasonTrailer(showId: Int, seasonNumber : Int) : ShowVideos? {
+        val url = "https://api.themoviedb.org/3/tv/{showId}/season/{seasonNumber}/videos?api_key={apiKey}&language=en-US"
+        return restTemplate.getForObject(url, ShowVideos::class.java, showId, seasonNumber, MOVIEDBKEY)
     }
 }

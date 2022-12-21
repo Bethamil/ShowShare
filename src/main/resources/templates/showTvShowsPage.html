@@ -22,13 +22,14 @@
 
 
     <div class="row  row-cols-lg-5 row-cols-md-4 row-cols-sm-2 g-4 ">
-        <div th:each="show : ${shows}">
+        <div th:each="show, iStat : ${shows}">
             <div class="col">
-                <div class="card h-100 bg-dark .h-50">
+                <div class="card h-100 bg-dark" style="min-height: 430px">
                     <img class="card-img-top" th:src="@{${'https://image.tmdb.org/t/p/w500' + show.getPoster_path()}}"
                          width="10" alt="Card image cap">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${show.getName()}"></h5>
+                    <div class="card-footer">
+                        <h5 th:if="${overviewPage}" class="card-title title-card-overview" th:text="(${iStat.index}+1+(${page} == 1 ? 0 : (${page}-1)*20)) + '. '+${show.getName()}"></h5>
+                        <h5 th:if="${overviewPage} == null" class="card-title title-card-overview" th:text="${show.getName()}"></h5>
                         <a th:href="@{/show/{showId}(showId=${show.getId()})}" class="stretched-link"></a>
                     </div>
                 </div>

@@ -37,7 +37,26 @@ class SeasonController(
                 )
             }
         }
+        addToModel(showId, seasonNumber, model, seasonData)
+        return "seasonDetails"
+    }
+
+    private fun addToModel(
+        showId: Int,
+        seasonNumber: Int,
+        model: Model,
+        seasonData: SeasonData?
+    ) {
         val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(showId)
+        val seasonVideo = MovieDbRestService().getSeasonTrailer(
+            showId,
+            seasonNumber
+        )?.results?.filter { it.official && it.type == "Trailer" && it.site == "YouTube" }
+
+        if (seasonVideo!!.isNotEmpty()) {
+            model.addAttribute("trailerData", seasonVideo[0])
+            model.addAttribute("TrailerAvailable", true)
+        }
 
         if (seasonData != null) {
             model.addAttribute("season", seasonData)
@@ -45,7 +64,6 @@ class SeasonController(
             model.addAttribute("season", SeasonData())
         }
         model.addAttribute("show", selectedShow)
-        return "seasonDetails"
     }
 
     @PostMapping("/show/addWatched/{showId}/{seasonNumber}/{episodeNumber}")

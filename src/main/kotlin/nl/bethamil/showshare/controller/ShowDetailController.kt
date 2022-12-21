@@ -30,6 +30,13 @@ class ShowDetailController(
     @GetMapping("/show/{showId}")
     protected fun clickShow(@PathVariable showId: Int, model: Model, request: HttpServletRequest): String {
         val selectedShow = MovieDbRestService(RestTemplateBuilder()).getSingleShow(showId)
+        val trailer = MovieDbRestService().getShowTrailer(showId)?.results?.
+        filter { it.official && it.type=="Trailer" && it.site=="YouTube" }
+
+        if (trailer!!.isNotEmpty()) {
+            model.addAttribute("trailerData", trailer[0])
+            model.addAttribute("TrailerAvailable", true)
+        }
 
         if (selectedShow != null) {
             model.addAttribute("show", selectedShow)

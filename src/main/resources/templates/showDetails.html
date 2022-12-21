@@ -14,11 +14,33 @@
              alt="...">
         <div class="card-body">
             <div class="row g-4">
-                <div class="col-md-4 col-lg-3 ">
+                <div class="col-auto text-center">
                     <img class="" th:src="@{${'https://image.tmdb.org/t/p/w185' + show.getPoster_path()}}"
                          alt="Card image cap">
+                    <div th:if="${TrailerAvailable}">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                data-bs-target="#trailerModal" style="width: 150px; margin-top: 10px">Trailer <i class="fa-solid fa-film"></i>
+                        </button>
+
+                        <!-- Trailer Modal-->
+                        <div class="modal fade" id="trailerModal">
+                            <div class="modal-dialog modal-dialog-centered modal-xl">
+                                <div class="modal-content bg-transparent">
+                                    <div class="modal-body video-container">
+                                        <iframe width="100%" height="100%"
+                                                th:src="'https://www.youtube.com/embed/' + ${trailerData.key}"
+                                                th:title="${trailerData.name}"
+                                                frameborder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="col-md-8 col-lg-9">
+                <div class="col">
                     <h1 class="card-title" th:text="${show.getName()} == null ? 'Loading failed... Try again later'
                     : ${show.getName()}">Card title</h1>
                     <p th:text="${show.getGenresAsString()}"></p>
@@ -35,10 +57,11 @@
                             <button type="button" class="btn btn-success" data-bs-toggle="modal"
                                     data-bs-target="#exampleModal">
                                 <span th:text="${ratingFromDB.getRating()} != null ?'Your Rating: '
-                                + ${ratingFromDB.getRating()} : 'Give Rating'"></span> <i class="fa-regular fa-star"></i>
+                                + ${ratingFromDB.getRating()} : 'Give Rating'"></span> <i
+                                    class="fa-regular fa-star"></i>
                             </button>
 
-                            <!-- Modal -->
+                            <!-- Modal RATING -->
                             <div class="modal fade modal-sm" id="exampleModal" tabindex="-1"
                                  aria-labelledby="exampleModalLabel"
                                  aria-hidden="true">
@@ -55,7 +78,8 @@
                                             <div class="modal-body">
                                                 <input hidden type="number" name="ratingDB"
                                                        th:value="${ratingFromDB.getRatingId()}">
-                                                <input hidden type="text" name="saveShowId" th:value="${show.getId()}">
+                                                <input hidden type="text" name="saveShowId"
+                                                       th:value="${show.getId()}">
                                                 <label for="ratingInput" class="form-label">Your rating</label>
                                                 <input class="form-control form-control-lg" id="ratingInput"
                                                        name="yourRating" th:value="${ratingFromDB.getRating()}"
@@ -72,7 +96,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
                         <!-- Save to Favorites-->
@@ -106,7 +129,6 @@
                             </form>
                         </div>
 
-
                     </div>
                     <p class="card-text" th:text="'First air date: ' + ${show.getFirst_air_date()}"></p>
                     <p class="card-text" th:text="'&#11088; ' + ${show.getVote_average()}"></p>
@@ -134,9 +156,7 @@
                         <h5 class="card-title flip-card-titel" th:text="${season.getSeason_number()} + '. '
                         + ${season.getName()}">Card
                             title</h5>
-                        <p class="card-text"><small th:text="'Episode count: ' + ${season.getEpisode_count()}">Last
-                            updated 3 mins
-                            ago</small></p>
+                        <p class="card-text"><small th:text="'Episode count: ' + ${season.getEpisode_count()}"></small></p>
                         <p class="card-text flip-card-text" th:text="${season.getOverview()}"></p>
                         <p class="card-text"><small th:text="'air date: ' + ${season.getAir_date()}"></small></p>
                         <a th:href="@{/show/{showId}/{seasonNumber}(showId=${show.getId()},
@@ -151,5 +171,16 @@
 
 <div th:replace="fragments/general :: footer"></div>
 <div th:replace="fragments/general :: bottomScripts"></div>
+<script>
+    $(function(){
+        $("body").on('hidden.bs.modal', function (e) {
+            let $iframes = $(e.target).find("iframe");
+            $iframes.each(function(index, iframe){
+                $(iframe).attr("src", $(iframe).attr("src"));
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

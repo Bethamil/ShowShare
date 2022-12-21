@@ -1,10 +1,12 @@
 package nl.bethamil.showshare.controller
 
 import nl.bethamil.showshare.service.MovieDbRestService
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.server.ResponseStatusException
 
 @Controller
 class HomePageController {
@@ -20,10 +22,18 @@ class HomePageController {
         @PathVariable category: String,
         model: Model
     ): String {
-        val allShows = MovieDbRestService().getShows(category, pageNumber)?.results
-        model.addAttribute("shows", allShows)
-        model.addAttribute("category", category)
-        model.addAttribute("page", pageNumber)
-        return "showTvShowsPage"
+        try {
+            val allShows = MovieDbRestService().getShows(category, pageNumber)?.results
+            if(allShows!!.isEmpty()) {
+                throw ResponseStatusException(HttpStatus.NO_CONTENT)
+            }
+            model.addAttribute("shows", allShows)
+            model.addAttribute("category", category)
+            model.addAttribute("page", pageNumber)
+            model.addAttribute("overviewPage", true)
+            return "showTvShowsPage"
+        } catch (e : Exception) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        }
     }
 }

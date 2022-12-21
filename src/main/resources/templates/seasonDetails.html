@@ -10,21 +10,47 @@
 <div class="container">
     <div class="card mb-3 bg-dark" style="width: auto">
         <div class="row g-0">
-            <div class="col-md-4">
+            <div class="col-auto">
                 <img th:src="@{${'https://image.tmdb.org/t/p/w500' +
                     (season.getPoster_path != null ? season.getPoster_path : show.getPoster_path)}}"
                      class="img-fluid rounded-start" alt="" style="height: 42vh;">
             </div>
-            <div class="col-md-8">
+            <div class="col">
                 <div class="card-body">
                     <div class="row">
-                        <div class=" col-9">
-                            <h1 class="card-title" th:text="${show.getName()}">Card title</h1>
+                        <div class="col">
+                            <div class="row">
+                                <h1 class="card-title col-auto" th:text="${show.getName()}">Card title</h1>
+
+                                <div th:if="${TrailerAvailable}" class="col" style="margin-top: -10px">
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                            data-bs-target="#trailerModal" style="width: 150px; margin-top: 20px; margin-bottom: 10px">
+                                        Trailer <i class="fa-solid fa-film"></i>
+                                    </button>
+
+                                    <!-- Trailer Modal-->
+                                    <div class="modal fade" id="trailerModal">
+                                        <div class="modal-dialog modal-dialog-centered modal-xl">
+                                            <div class="modal-content bg-transparent">
+                                                <div class="modal-body video-container">
+                                                    <iframe width="100%" height="100%"
+                                                            th:src="'https://www.youtube.com/embed/' + ${trailerData.key}"
+                                                            th:title="${trailerData.name}"
+                                                            frameborder="0"
+                                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                            allowfullscreen></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <h5 class="card-title" th:text="${season.getName()} == null
                         ? 'Loading failed... Try again later' : ${season.getName()}">Card title</h5>
                             <p class="card-text" th:text="${season.getOverview()}"></p>
                         </div>
-                        <div class="col-3" sec:authorize="isAuthenticated()">
+                        <div class="col-auto" sec:authorize="isAuthenticated()">
                             <div class="col-auto mb-3" id="watchedFullSeason">
                                 <button th:onclick="|watchedFullSeason(${show.getId}, ${season.getSeason_number})|"
                                         class="btn btn-success "
@@ -50,16 +76,16 @@
 
     <div th:each="episode : ${season.getEpisodes()}">
         <div class="card mb-3 bg-dark " style="width: auto">
-            <div class="row g-0">
-                <div class="col-md-4">
+            <div class="row g-3">
+                <div class="col-auto">
                     <img th:if="${episode.getStill_path()} != null" th:src="@{${'https://image.tmdb.org/t/p/w185'
                     + episode.getStill_path()}}"
                          class="img-fluid rounded-start" style="height: 20vh;" alt="...">
                 </div>
-                <div class="col-md-8">
+                <div class="col">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-9">
+                        <div class="row g-3">
+                            <div class="col">
                                 <h5 class="card-title"
                                     th:text="${episode.getEpisode_number} + '. ' + ${episode.getName()}"></h5>
 
@@ -67,14 +93,14 @@
                         + '&emsp; Air date: ' + ${episode.getAir_date()}"></small>
                                 <p class="card-text" th:text="${episode.getOverview()}"></p>
                             </div>
-                            <div sec:authorize="isAuthenticated()" class="col-3 checkButtons">
+                            <div sec:authorize="isAuthenticated()" class="col-auto checkButtons">
                                 <div class="watchedButton"
                                      th:style="${episode.getNotWatched} ? 'display: block' : 'display: none'">
                                     <button th:onclick="|addToWatched(${show.getId}, ${season.getSeason_number},
                                     ${episode.getEpisode_number});   |"
                                             class="btn btn-success  "
                                             style="max-height: 5vh" type="submit"
-                                    >Watch <i class="fa-regular fa-eye"></i>
+                                    ><i class="fa-regular fa-eye"></i>
                                     </button>
                                 </div>
                                 <div class="deleteWatchedButton"
@@ -83,7 +109,7 @@
                                     ${episode.getEpisode_number});   |"
                                             class="btn btn-danger  "
                                             style="max-height: 5vh" type="submit"
-                                    >Unwatch <i class="fa-regular fa-eye-slash"></i>
+                                    ><i class="fa-regular fa-eye-slash"></i>
                                     </button>
                                 </div>
                             </div>
@@ -148,6 +174,14 @@
             $(".watchedButton").show();
             $(".deleteWatchedButton").hide();
         })
+    });
+    $(function () {
+        $("body").on('hidden.bs.modal', function (e) {
+            let $iframes = $(e.target).find("iframe");
+            $iframes.each(function (index, iframe) {
+                $(iframe).attr("src", $(iframe).attr("src"));
+            });
+        });
     });
 
 
