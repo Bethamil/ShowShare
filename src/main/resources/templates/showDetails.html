@@ -55,14 +55,14 @@
                         <div class="">
                             <!-- Button trigger modal -->
                             <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
+                                    data-bs-target="#ratingModal">
                                 <span th:text="${ratingFromDB.getRating()} != null ?'Your Rating: '
                                 + ${ratingFromDB.getRating()} : 'Give Rating'"></span> <i
                                     class="fa-regular fa-star"></i>
                             </button>
 
                             <!-- Modal RATING -->
-                            <div class="modal fade modal-sm" id="exampleModal" tabindex="-1"
+                            <div class="modal fade modal-sm" id="ratingModal" tabindex="-1"
                                  aria-labelledby="exampleModalLabel"
                                  aria-hidden="true">
                                 <div class="modal-dialog">

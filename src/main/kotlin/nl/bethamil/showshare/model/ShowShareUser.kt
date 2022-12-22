@@ -15,6 +15,9 @@ class ShowShareUser(
 
     @Column(name= "username", unique = true )
     private var username: String = "",
+    var email: String = "",
+    @Lob
+    var aboutMe: String? = "",
     private var password : String? = ""
 )
 

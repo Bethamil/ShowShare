@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.server.ResponseStatusException
+import java.time.LocalDateTime
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
@@ -91,7 +92,7 @@ class ShowDetailController(
         @ModelAttribute("saveShowId") showId: Long, request: HttpServletRequest
     ): String {
         val currentUser = getLoggedInUser(request)
-        val myFavorites = MyFavoritesVM(showId = showId, user = currentUser)
+        val myFavorites = MyFavoritesVM(showId = showId, user = currentUser, localDateTime = LocalDateTime.now())
         myFavoritesService.save(myFavorites)
         return "redirect:/show/$showId"
     }
@@ -101,7 +102,7 @@ class ShowDetailController(
         @ModelAttribute("saveShowId") showId: Long, request: HttpServletRequest
     ): String {
         val currentUser = getLoggedInUser(request)
-        val watchlistVM = WatchlistVM(showId = showId, showShareUserVM = currentUser)
+        val watchlistVM = WatchlistVM(showId = showId, showShareUserVM = currentUser, localDateTime = LocalDateTime.now())
         watchlistService.save(watchlistVM)
         return "redirect:/show/$showId"
     }

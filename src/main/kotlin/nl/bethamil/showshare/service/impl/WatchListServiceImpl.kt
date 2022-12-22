@@ -4,6 +4,7 @@ import nl.bethamil.showshare.repository.WatchlistRepo
 import nl.bethamil.showshare.service.WatchlistService
 import nl.bethamil.showshare.mapper.ModelViewMapper
 import nl.bethamil.showshare.viewmodel.WatchlistVM
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,8 +19,8 @@ class WatchListServiceImpl(private val watchlistRepo : WatchlistRepo) : Watchlis
         watchlistRepo.deleteById(id)
     }
 
-    override fun findByUserId(id: Long) : List<WatchlistVM> {
-        return watchlistRepo.findByShowShareUserId(id).map { Watchlist -> Watchlist.toVM() }
+    override fun findByUserId(id: Long, pageable: Pageable) : List<WatchlistVM> {
+        return watchlistRepo.findByShowShareUserId(id, pageable).map { Watchlist -> Watchlist.toVM() }
     }
 
     override fun findByUserIdAndShowId(show_id: Long, user_id: Long): WatchlistVM? {
@@ -27,5 +28,9 @@ class WatchListServiceImpl(private val watchlistRepo : WatchlistRepo) : Watchlis
         return if (watchlist.isPresent) {
             watchlist.get().toVM()
         } else null
+    }
+
+    override fun countWatchlistByShowShareUserId(showShareUser_id: Long) : Int {
+        return watchlistRepo.countWatchlistByShowShareUserId(showShareUser_id)
     }
 }

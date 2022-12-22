@@ -4,7 +4,9 @@ import nl.bethamil.showshare.mapper.ModelViewMapper
 import nl.bethamil.showshare.repository.MyFavoritesRepo
 import nl.bethamil.showshare.service.MyFavoritesService
 import nl.bethamil.showshare.viewmodel.MyFavoritesVM
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+
 
 @Service
 class MyFavoritesServiceImpl(val myFavoritesRepo: MyFavoritesRepo) : MyFavoritesService, ModelViewMapper{
@@ -16,8 +18,8 @@ class MyFavoritesServiceImpl(val myFavoritesRepo: MyFavoritesRepo) : MyFavorites
         return null
     }
 
-    override fun findByUserId(user_id: Long): List<MyFavoritesVM> {
-        return myFavoritesRepo.findByUserId(user_id).map { it.toVM()}
+    override fun findByUserId(user_id: Long, pageable: Pageable): List<MyFavoritesVM> {
+        return myFavoritesRepo.findByUserId(user_id, pageable).map { it.toVM()}
     }
 
     override fun save(myFavoritesVM: MyFavoritesVM) {
@@ -26,5 +28,9 @@ class MyFavoritesServiceImpl(val myFavoritesRepo: MyFavoritesRepo) : MyFavorites
 
     override fun deleteById(id : Long) {
         myFavoritesRepo.deleteById(id)
+    }
+
+    override fun countMyFavoritesByUserId(user_id: Long): Long {
+        return myFavoritesRepo.countMyFavoritesByUserId(user_id)
     }
 }

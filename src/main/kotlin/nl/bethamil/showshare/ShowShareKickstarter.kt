@@ -15,8 +15,9 @@ class ShowShareKickstarter(
 
     override fun run(vararg args: String?) {
         if (showShareUserRepo.findByUsername("admin").isEmpty) {
-            val admin = ShowShareUser(username = "admin",
+            val admin = ShowShareUser(username = "admin", email = "admin@showshare.com",
                 password = passwordEncoder.encode("admin"))
+
             showShareUserRepo.save(admin)
         }
     }

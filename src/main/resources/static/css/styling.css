@@ -140,3 +140,35 @@ body {
     width: 100%;
     height: 100%;
 }
+
+.profile-picture {
+    width: 200px;
+    margin: 20px;
+}
+
+.editIcon {
+    color: darkgreen;
+}
+
+.editIcon:hover  {
+    color: green;
+}
+
+.carousel-row {
+    margin-left: 10px;
+    margin-right: 10px;
+    max-height: 600px;
+}
+
+.carousel-control-prev, .carousel-control-next {
+    background-color: rgba(0, 128, 0, 0.64);
+    max-width: 4vh;
+    max-height: 4vh;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.fav-show-card-profile {
+    max-width: 250px;
+}

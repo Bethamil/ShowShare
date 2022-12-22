@@ -11,7 +11,7 @@
 </head>
 <body>
 <div th:fragment="navbar" style="margin-bottom: 95px">
-    <nav class="navbar navbar-dark navbar-expand-lg fixed-top" style="background-color: #222831;">
+    <nav class="navbar navbar-dark navbar-expand-xl fixed-top" style="background-color: #222831;">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">
                 <img src="/images/ShowShare.png" style=" width: 25vh" alt="logo"></a>
@@ -25,8 +25,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
-                            TV-Shows
-                        </a>
+                            TV-Shows <i class="fa-solid fa-tv"></i></a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" th:href="@{/allShows/top_rated/1}">Top Rated <i class="fa-solid fa-up-long"></i></a></li>
                             <li><a class="dropdown-item" th:href="@{/allShows/popular/1}">Most Popular  <i class="fa-solid fa-fire"></i> </a></li>
@@ -39,6 +38,9 @@
                     </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
                         <a class="nav-link" aria-current="page" th:href="@{/watchlist}">Watchlist <i class="fa-regular fa-eye"></i></a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" aria-current="page" th:href="@{/myProfile}">My Profile <i class="fa-regular fa-user"></i></a>
                     </li>
 
                 </ul>

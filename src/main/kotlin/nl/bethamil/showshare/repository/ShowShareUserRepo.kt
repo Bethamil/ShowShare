@@ -6,4 +6,5 @@ import java.util.*
 
 interface ShowShareUserRepo : JpaRepository<ShowShareUser, Long> {
     fun findByUsername(username: String?): Optional<ShowShareUser>
+    fun findByEmail(email: String?): Optional<ShowShareUser>
 }

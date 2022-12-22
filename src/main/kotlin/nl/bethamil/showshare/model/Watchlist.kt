@@ -1,5 +1,6 @@
 package nl.bethamil.showshare.model
 
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -10,7 +11,8 @@ class Watchlist (
     var watchlistId: Long? = null,
     val showId : Long,
     @ManyToOne
-    val showShareUser: ShowShareUser
-    )
+    val showShareUser: ShowShareUser,
+    val localDateTime: LocalDateTime
+)
 
 

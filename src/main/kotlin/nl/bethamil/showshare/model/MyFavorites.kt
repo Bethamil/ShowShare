@@ -1,5 +1,6 @@
 package nl.bethamil.showshare.model
 
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -9,5 +10,6 @@ class MyFavorites(
     var id: Long? = null,
     @ManyToOne
     val user : ShowShareUser,
-    val showId : Long
+    val showId : Long,
+    val localDateTime: LocalDateTime
 )

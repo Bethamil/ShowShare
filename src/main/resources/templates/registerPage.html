@@ -17,15 +17,21 @@
             <div th:if="${showAlertScreen}" class="alert alert-danger w-75 alertWrap mx-auto">
                 <ul class="mb-0">
                     <li th:if="${noFailUsername} == false">An account with this username already exists</li>
+                    <li th:if="${noFailEmail} == false">An account with this email-address already exists</li>
                     <li th:if="${noFailRecaptcha} == false">Recaptcha failed. Please try again</li>
                     <li th:if="${notSamePassword} == false">Passwords did not match</li>
                 </ul>
             </div>
             <form th:action="@{/register/new}" method="post" th:object="${newUser}" id="registerForm" class="">
-                <div class="mb-4">
+                <div class="mb-1">
                     <label for="usernameInput" class="form-label">Username</label>
                     <input type="text" class="form-control" id="usernameInput" th:field="*{username}"
                            placeholder="Enter username" required/>
+                </div>
+                <div class="mb-5">
+                    <label for="emailInput" class="form-label">Email-address</label>
+                    <input type="email" class="form-control" id="emailInput" th:field="*{email}"
+                           placeholder="Enter email" required/>
                 </div>
                 <div class="mb-1">
                     <label for="inputPassword" class="form-label">Password</label>

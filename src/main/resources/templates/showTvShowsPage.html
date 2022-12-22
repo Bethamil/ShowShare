@@ -14,7 +14,7 @@
         <h1 th:case="popular">Most Popular</h1>
         <h1 th:case="top_rated">Top Rated</h1>
         <h1 th:case="on_the_air">On the Air</h1>
-        <h1 th:case="favorites">My Favorites</h1>
+        <h1 th:case="favorites" th:text="'Favorites of ' + ${user.username}"></h1>
         <h1 th:case="watchlist">Watchlist</h1>
     </div>
 
@@ -24,12 +24,14 @@
     <div class="row  row-cols-lg-5 row-cols-md-4 row-cols-sm-2 g-4 ">
         <div th:each="show, iStat : ${shows}">
             <div class="col">
-                <div class="card h-100 bg-dark" style="min-height: 430px">
+                <div class="card h-100 bg-dark fav-show-card-profile mx-auto">
                     <img class="card-img-top" th:src="@{${'https://image.tmdb.org/t/p/w500' + show.getPoster_path()}}"
                          width="10" alt="Card image cap">
                     <div class="card-footer">
-                        <h5 th:if="${overviewPage}" class="card-title title-card-overview" th:text="(${iStat.index}+1+(${page} == 1 ? 0 : (${page}-1)*20)) + '. '+${show.getName()}"></h5>
-                        <h5 th:if="${overviewPage} == null" class="card-title title-card-overview" th:text="${show.getName()}"></h5>
+                        <h5 th:if="${overviewPage}" class="card-title title-card-overview"
+                            th:text="(${iStat.index}+1+(${page} == 1 ? 0 : (${page}-1)*20)) + '. '+${show.getName()}"></h5>
+                        <h5 th:if="${overviewPage} == null" class="card-title title-card-overview"
+                            th:text="${show.getName()}"></h5>
                         <a th:href="@{/show/{showId}(showId=${show.getId()})}" class="stretched-link"></a>
                     </div>
                 </div>
@@ -38,7 +40,6 @@
     </div>
     <div th:if="${category != 'favorites'}">
         <div th:if="${category != 'watchlist'}">
-
             <br>
             <nav aria-label="...">
                 <ul class="pagination pagination-sm justify-content-center">
@@ -51,6 +52,30 @@
                 </ul>
             </nav>
         </div>
+    </div>
+
+    <div th:if="${category == 'favorites'}">
+        <br>
+        <nav aria-label="...">
+            <ul class="pagination pagination-sm justify-content-center">
+                <li th:if="${page} > 1" class="page-item"><a class="page-link"
+                                                             th:href="'/favorites/' +${user.id} + '?page=' + (${page} - 1)">Previous page</a></li>
+                <li th:if="(${page}*20) < ${maxAmount}" class="page-item"><a class="page-link"
+                                                              th:href="'/favorites/' +${user.id} + '?page=' + (${page} + 1)">Next Page</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div th:if="${category == 'watchlist'}">
+        <br>
+        <nav aria-label="...">
+            <ul class="pagination pagination-sm justify-content-center">
+                <li th:if="${page} > 1" class="page-item"><a class="page-link"
+                                                             th:href="'/watchlist/' + '?page=' + (${page} - 1)">Previous page</a></li>
+                <li th:if="(${page}*20) < ${maxAmount}" class="page-item"><a class="page-link"
+                                                                             th:href="'/watchlist/' + '?page=' + (${page} + 1)">Next Page</a></li>
+            </ul>
+        </nav>
     </div>
 
 

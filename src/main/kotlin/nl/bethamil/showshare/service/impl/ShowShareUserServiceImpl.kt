@@ -19,4 +19,25 @@ class ShowShareUserServiceImpl(val showShareUserRepo: ShowShareUserRepo) : ShowS
             showShareUser.get().toVM()
         } else null
     }
+
+    override fun findByRegisteredUsername(username: String?): ShowShareRegisterUserVM? {
+        val showShareUser =  showShareUserRepo.findByUsername(username)
+        return if (showShareUser.isPresent) {
+            showShareUser.get().toVMRegistered()
+        } else null
+    }
+
+    override fun findByEmail(email: String?): ShowShareUserVM? {
+        val showShareUser = showShareUserRepo.findByEmail(email)
+        return if (showShareUser.isPresent) {
+            showShareUser.get().toVM()
+        } else null
+    }
+
+    override fun findById(userId: Long): ShowShareUserVM? {
+        val user = showShareUserRepo.findById(userId)
+        return if (user.isPresent) {
+            user.get().toVM()
+        } else null
+    }
 }
