@@ -109,7 +109,8 @@ class UserController(
             val newUser = ShowShareRegisterUserVM(
                 username = showShareUser.username.trim(),
                 email = showShareUser.email,
-                password = passwordEncoder.encode(showShareUser.password)
+                password = passwordEncoder.encode(showShareUser.password),
+                aboutMe = null
             )
             val checkPassword = checkPassword(showShareUser.password!!, checkPW)
             val checkRecaptcha = checkRecaptcha(request)
@@ -126,7 +127,7 @@ class UserController(
                 return addErrors(model, checkPassword, checkRecaptcha, checkUsername, checkEmail)
             }
         }
-        return "redirect:/"
+        return "redirect:/myProfile"
     }
 
     private fun addErrors(

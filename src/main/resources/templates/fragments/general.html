@@ -11,69 +11,93 @@
 </head>
 <body>
 <div th:fragment="navbar" style="margin-bottom: 95px">
-    <nav class="navbar navbar-dark navbar-expand-xl fixed-top" style="background-color: #222831;">
+    <nav class="navbar navbar-dark navbar-expand-lg fixed-top" style="background-color: #222831;">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">
-                <img src="/images/ShowShare.png" style=" width: 25vh" alt="logo"></a>
+                <img src="/images/ShowShare.png" style=" width: 25vh; margin-top: -10px" alt="logo"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="font-size: 20px">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="font-size: 18px">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
                             TV-Shows <i class="fa-solid fa-tv"></i></a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" th:href="@{/allShows/top_rated/1}">Top Rated <i class="fa-solid fa-up-long"></i></a></li>
-                            <li><a class="dropdown-item" th:href="@{/allShows/popular/1}">Most Popular  <i class="fa-solid fa-fire"></i> </a></li>
-                            <li><a class="dropdown-item" th:href="@{/allShows/on_the_air/1}">On the air <i class="fa-solid fa-tv"></i></a></li>
+                            <li><a class="dropdown-item" th:href="@{/allShows/top_rated/1}">Top Rated <i
+                                    class="fa-solid fa-up-long"></i></a></li>
+                            <li><a class="dropdown-item" th:href="@{/allShows/popular/1}">Most Popular <i
+                                    class="fa-solid fa-fire"></i> </a></li>
+                            <li><a class="dropdown-item" th:href="@{/allShows/on_the_air/1}">On the air <i
+                                    class="fa-solid fa-tv"></i></a></li>
                         </ul>
                     </li>
 
                     <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" aria-current="page" th:href="@{/myFavorites}">My Favorites <i class="fa-regular fa-heart"></i></a>
+                        <a class="nav-link" aria-current="page" th:href="@{/myFavorites}">Favorites <i
+                                class="fa-regular fa-heart"></i></a>
                     </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" aria-current="page" th:href="@{/watchlist}">Watchlist <i class="fa-regular fa-eye"></i></a>
+                        <a class="nav-link" aria-current="page" th:href="@{/watchlist}">Watchlist <i
+                                class="fa-regular fa-eye"></i></a>
                     </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" aria-current="page" th:href="@{/myProfile}">My Profile <i class="fa-regular fa-user"></i></a>
-                    </li>
-
                 </ul>
 
-                <form class="d-flex navbar-nav" th:action="@{/search}" role="search" th:object="${query}" method="get">
-                    <input class="form-control me-2" id="search" name="query" placeholder="Search by title"
+
+                <form class="input-group searchBar" th:action="@{/search}">
+                    <input class="form-control searchBarInput" id="searchBarInput" name="query"
+                           placeholder="Search by title"
                            aria-label="Search" required>
-                    <button class="btn btn-outline-success" id="WFF" type="submit">Search</button>
+                    <button class="btn btn-success" type="submit"><i
+                            class="fa-solid fa-magnifying-glass searchIconBigBar"></i></button>
                 </form>
 
-                <p>
-                    &emsp;
-                </p>
 
-                <ul class="navbar-nav" style="font-size: 20px">
-                <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a class="nav-link" aria-current="page" th:href="@{/register}">Register</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a class="nav-link" aria-current="page" th:href="@{/login}">Login</a>
-                </li>
+                <ul class="navbar-nav" style="font-size: 18px" sec:authorize="isAnonymous()">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Login
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="min-width: 300px">
+                            <form class="px-4 py-3" th:action="@{/login}" method="post">
+                                <div class="form-group">
+                                    <label for="usernameNav">Username</label>
+                                    <input name="username" class="form-control" id="usernameNav" placeholder="Username"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="passwordNav">Password</label>
+                                    <input name="password" type="password" class="form-control" id="passwordNav"
+                                           placeholder="Password" required>
+                                </div>
+                                <div class="text-center" style="margin-top: 10px">
+                                    <button type="submit" class="btn btn-success">
+                                        Sign in
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/register">New around here? Sign up</a>
+                        </ul>
+                    </li>
                 </ul>
 
-                <ul class="navbar-nav" style="font-size: 20px">
-                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        <span sec:authentication="name"></span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
-                    </ul>
-                </li>
+
+                <ul class="navbar-nav" style="font-size: 18px">
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            <span sec:authentication="name"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li> <a class="dropdown-item" th:href="@{/myProfile}">My Profile</a></li>
+                            <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                        </ul>
+                    </li>
                 </ul>
 
             </div>
@@ -82,7 +106,7 @@
 
 </div>
 <div th:fragment="footer" class="mt-auto">
-    <footer><p class="text-center text-muted">Copyright Bethamil &copy;2022</p></footer>
+    <footer style="margin-top: 30px"><p class="text-center text-muted">Copyright Bethamil &copy;2022</p></footer>
 </div>
 <div th:fragment="bottomScripts">
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>

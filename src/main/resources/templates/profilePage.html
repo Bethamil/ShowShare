@@ -19,12 +19,12 @@
                     <h1 class="card-title" th:text="${user.username}"></h1>
                     <div class="col">
                         <div class="row">
-                            <div th:if="${user.aboutMe} == null" class="col">
+                            <div th:if="${user.aboutMe} == null and ${#httpServletRequest.requestURI}  == '/myProfile'" class="col-auto">
                                 <p class="card-text ">Share something about yourself</p>
                             </div>
-                            <p th:if="${user.aboutMe} != null" th:text="${user.aboutMe}" class="col"></p>
+                            <p th:if="${user.aboutMe} != null" th:text="${user.aboutMe}" class="col-11"></p>
 
-                            <div th:if="${#httpServletRequest.requestURI == '/myProfile'}" class="col-auto">
+                            <div th:if="${#httpServletRequest.requestURI == '/myProfile'}" class="col">
                                 <a type="button" class="editIcon icon"
                                    data-bs-toggle="modal"
                                    data-bs-target="#aboutMeModal">
@@ -69,11 +69,15 @@
         </div>
     </div>
 
-    <div th:if="${not #lists.isEmpty(shows1)}" class="card bg-dark">
-        <div class="card-body">
-            <h5 class="card-title">Favorites</h5>
+    <div  class="card bg-dark">
+        <div class="card-body" style="min-height: 200px">
+            <h4 class="card-title">Favorites</h4>
 
-            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div th:if="${#lists.isEmpty(shows1)}" style="margin-top: 40px">
+                <h6 class="text-center">No favorites yet</h6>
+            </div>
+
+            <div  th:if="${not #lists.isEmpty(shows1)}" id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
 
                     <div th:if="${not #lists.isEmpty(shows1)}" class="carousel-item active">
@@ -140,10 +144,8 @@
                 </div>
             </div>
         </div>
-
-        <a th:href="'/favorites/' + ${user.id}" class="btn btn-success mx-auto"
+        <a th:if="${not #lists.isEmpty(shows1)}" th:href="'/favorites/' + ${user.id}" class="btn btn-success mx-auto"
            style="max-width: 200px; margin-bottom: 20px">Show more</a>
-
     </div>
 
 

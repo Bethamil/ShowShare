@@ -1,5 +1,7 @@
 package nl.bethamil.showshare.model
 
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import javax.persistence.*
 
 @Entity
@@ -10,6 +12,7 @@ class WatchedEpisode(
     var viewDateId: Long? = null,
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     val showShareUser: ShowShareUser,
     val showId : Int,
     val seasonNumber : Int,

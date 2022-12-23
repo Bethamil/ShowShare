@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 
+
 @Configuration
 @EnableWebSecurity
 @Profile("!https")
@@ -26,7 +27,7 @@ class ShowShareSecurityConfig(val showShareUserDetailService: ShowShareUserDetai
                 .antMatchers("/css/*", "/webjars/**", "/images/**", "/search/**").permitAll()
                 .antMatchers("/", "/allShows/**", "/show/**", "/register/**").permitAll()
                 .anyRequest().authenticated()
-        }.formLogin { form: FormLoginConfigurer<HttpSecurity> -> form.loginPage("/login").permitAll().and() }
+        }.formLogin { form: FormLoginConfigurer<HttpSecurity> -> form.loginPage("/login").defaultSuccessUrl("/myProfile").permitAll().and() }
             .logout { logout: LogoutConfigurer<HttpSecurity?> ->
                 logout.permitAll().invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID").logoutSuccessUrl("/")

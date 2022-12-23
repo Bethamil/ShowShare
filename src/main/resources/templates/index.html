@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org">
+<head th:replace="fragments/general :: baseHeader(~{:: title})">
+    <title>ShowShare|Home</title>
+</head>
+<body>
+<div th:replace="fragments/general :: navbar"></div>
+<div class="container">
+
+    <div id="homePageCarousel" class="carousel carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-inner">
+
+            <div class="carousel-item active home-page-car-img" data-bs-interval="7000"
+                 th:style="'background-image: radial-gradient(farthest-side, rgba(34, 40, 49, 0.2) , rgba(34, 40, 49, 0.5), rgba(34, 40, 49, 0.7) , rgba(34, 40, 49, 0.9) ,rgba(34, 40, 49, 1)),url(https://image.tmdb.org/t/p/original/' + ${top_show1} + ')'">
+            </div>
+            <div class="carousel-item home-page-car-img" data-bs-interval="7000"
+                 th:style="'background-image: radial-gradient(farthest-side, rgba(34, 40, 49, 0.2) , rgba(34, 40, 49, 0.5), rgba(34, 40, 49, 0.7) , rgba(34, 40, 49, 0.9) ,rgba(34, 40, 49, 1)),url(https://image.tmdb.org/t/p/original/' + ${top_show2} + ');'">
+            </div>
+            <div class="carousel-item  home-page-car-img" data-bs-interval="7000"
+                 th:style="'background-image: radial-gradient(farthest-side, rgba(34, 40, 49, 0.2) , rgba(34, 40, 49, 0.5), rgba(34, 40, 49, 0.7) , rgba(34, 40, 49, 0.9) ,rgba(34, 40, 49, 1)),url(https://image.tmdb.org/t/p/original/' + ${top_show3} + ');'">
+            </div>
+        </div>
+    </div>
+    <div class="text-center" style="margin : 10px">
+        <img src="/images/ShowShare.png" class="" style="width: 40%;">
+    </div>
+    <div class="text-center" style="margin-bottom: 30px" sec:authorize="isAnonymous()">
+        <h2>Track tv-shows you’ve watched. Save those you want to see</h2>
+        <a href="/register" class="btn btn-success btn-lg">Sign up</a>
+    </div>
+
+    <div class="text-center" style="margin-bottom: 30px" sec:authorize="isAuthenticated()">
+        <h2>Welcome back <span sec:authentication="name"></span></h2>
+    </div>
+
+    <div class="row">
+        <div class="col-auto">
+            <h3 class="">TV News</h3>
+            <rssapp-list id="gATwRqWbQb9sn1vm"></rssapp-list>
+            <script src="https://widget.rss.app/v1/list.js" type="text/javascript" async></script>
+        </div>
+        <div class="col">
+            <h3 class="text-center">Popular</h3>
+            <div th:each="show : ${pop_shows}" class="mb-2">
+                <div class="mx-auto card bg-transparent fav-show-card-profile mx-auto">
+                    <img class="card-img"
+                         th:src="@{${'https://image.tmdb.org/t/p/w500' + show.getPoster_path()}}"
+                         width="10" alt="Card image cap">
+                    <a th:href="@{/show/{showId}(showId=${show.getId()})}"
+                       class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div th:replace="fragments/general :: footer"></div>
+<div th:replace="fragments/general :: bottomScripts"></div>
+</body>
+</html>

@@ -7,17 +7,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
-class ShowShareUserDetailService(val showShareUserRepo: ShowShareUserRepo) : UserDetailsService  {
+class ShowShareUserDetailService(val showShareUserRepo: ShowShareUserRepo) : UserDetailsService {
 
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String?): UserDetails? {
-        return showShareUserRepo.findByUsername(username).orElseThrow {
-            UsernameNotFoundException(
-                String.format(
-                    "User with name %s not found",
-                    username
+        return try {
+            showShareUserRepo.findByUsername(username).get()
+        } catch (e: NoSuchElementException) {
+            showShareUserRepo.findByEmail(username).orElseThrow {
+                UsernameNotFoundException(
+                    String.format(
+                        "User with %s not found",
+                        username
+                    )
                 )
-            )
+            }
         }
     }
 }
